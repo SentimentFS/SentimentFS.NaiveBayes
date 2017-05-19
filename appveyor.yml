@@ -1,0 +1,21 @@
+
+# version format
+version: 0.0.1.{build}
+
+# branches to build
+branches:
+  # blacklist
+  except:
+    - gh-pages
+
+# Do not build on tags (GitHub only)
+skip_tags: true
+
+build_script:  
+- ps: .\build.ps1
+
+test: off
+
+artifacts:  
+- path: '**\BayesFS.*.nupkg' 
+  name: NuGet
