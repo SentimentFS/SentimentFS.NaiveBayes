@@ -1,11 +1,14 @@
 namespace SentimentFS.NaiveBayes.Training
 
 module StateCache =
-
+    open SentimentFS.NaiveBayes.Dto
+    
     type Msg<'TValue> =
     | Add of string * 'TValue
     | Get of string * AsyncReplyChannel<option<'TValue>>
     | Clear
+
+    type Cache<'a, 'b when 'a : comparison and 'b : comparison>  = MailboxProcessor<Msg<State<'a, 'b>>>
 
     let caching<'TValue>() = MailboxProcessor.Start(fun agent ->
         let rec loop(map : Map<string, 'TValue>) =
@@ -32,5 +35,5 @@ module Trainer =
 
     let empty<'T>() = caching<'T>()
 
-    let train(query: TrainingQuery<_,_>)(cache: MailboxProcessor<Msg<State<_, string>>>) = 
+    let train(query: TrainingQuery<_,_>)(cache: Cache<_,_>) = 
         cache
