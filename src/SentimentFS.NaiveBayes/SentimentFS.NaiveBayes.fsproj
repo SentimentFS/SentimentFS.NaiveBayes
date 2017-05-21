@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Dto.fs" />
     <Compile Include="Classification.fs" />
     <Compile Include="Training.fs" />
   </ItemGroup>
