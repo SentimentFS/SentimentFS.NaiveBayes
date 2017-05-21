@@ -7,6 +7,8 @@
 
   <ItemGroup>
     <Compile Include="Dto.Tests.fs" />
+    <Compile Include="Training.Tests.fs" />
+    <Compile Include="Classification.Tests.fs" />
     <Compile Include="Main.fs" />
   </ItemGroup>
 
