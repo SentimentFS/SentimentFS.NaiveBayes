@@ -1,6 +1,8 @@
-﻿module SentimentFS_NaiveBayes_Tests
-open Expecto
+﻿namespace SentimentFS.NaiveBayes.Tests
 
-[<EntryPoint>]
-let main argv =
-    Tests.runTestsInAssembly defaultConfig argv
+module Program =
+    open Expecto
+    
+    [<EntryPoint>]
+    let main argv =
+        Tests.runTestsInAssembly defaultConfig argv

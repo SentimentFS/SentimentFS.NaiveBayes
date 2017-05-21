@@ -9,4 +9,4 @@ type State<'a, 'b when 'a : comparison and 'b : comparison> = { categories: Map<
 module State = 
     
     [<CompiledName("Empty")>]
-    let empty = { categories = Map.empty<'a, Category<'b>> }
+    let empty() = { categories = Map.empty<'a, Category<'b>> }
