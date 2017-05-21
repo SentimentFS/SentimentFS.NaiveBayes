@@ -1,1 +1,36 @@
 namespace SentimentFS.NaiveBayes.Training
+
+module StateCache =
+
+    type Msg<'TValue> =
+    | Add of string * 'TValue
+    | Get of string * AsyncReplyChannel<option<'TValue>>
+    | Clear
+
+    let caching<'TValue>() = MailboxProcessor.Start(fun agent ->
+        let rec loop(map : Map<string, 'TValue>) =
+            async {
+                let! msg = agent.Receive()
+                match msg with
+                | Add(key, value) -> 
+                    return! loop(map.Add(key, value))
+                | Get(key, repl) ->
+                    match map.TryFind(key) with
+                    | Some(value) -> 
+                        repl.Reply(Some value) 
+                        return! loop(map)
+                    | None ->
+                        repl.Reply(None) 
+                        return! loop(map)
+                | Clear -> 
+                    return! loop(Map.empty<string, 'TValue>)}
+        loop Map.empty<string, 'TValue> )
+
+module Trainer =
+    open SentimentFS.NaiveBayes.Dto
+    open StateCache
+
+    let empty<'T>() = caching<'T>()
+
+    let train(query: TrainingQuery<_,_>)(cache: MailboxProcessor<Msg<State<_, string>>>) = 
+        cache
