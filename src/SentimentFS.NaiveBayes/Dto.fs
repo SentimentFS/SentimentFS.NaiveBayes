@@ -1,5 +1,7 @@
 namespace SentimentFS.NaiveBayes.Dto
 
+type ClassificationScore<'a when 'a : comparison>  = { score: Map<'a, double> }
+
 type TrainingQuery<'a, 'b when 'a : comparison and 'b : comparison> = { value: 'a; category: 'b; weight : int option }
 
 type Category<'a when 'a: comparison> = { trainings: int; tokens: Map<'a, int> }

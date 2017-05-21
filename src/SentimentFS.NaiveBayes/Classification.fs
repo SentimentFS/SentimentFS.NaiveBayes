@@ -1,4 +1,5 @@
 namespace SentimentFS.NaiveBayes.Classification
 
 module Classifier =
-    let classify
+    open SentimentFS.NaiveBayes.Dto
+    let classify(element: _) = { score = Map.empty<_, double> }
