@@ -10,7 +10,7 @@ module StateCache =
 
     type Cache<'a, 'b when 'a : comparison and 'b : comparison>  = MailboxProcessor<Msg<State<'a, 'b>>>
 
-    let caching<'TValue>() = MailboxProcessor.Start(fun agent ->
+    let caching<'a, 'b when 'a : comparison and 'b : comparison>(): Cache<'a, 'b> = MailboxProcessor.Start(fun agent ->
         let rec loop(map : Map<string, 'TValue>) =
             async {
                 let! msg = agent.Receive()
@@ -33,7 +33,7 @@ module Trainer =
     open SentimentFS.NaiveBayes.Dto
     open StateCache
 
-    let empty<'T>() = caching<'T>()
+    let empty<'a, 'b when 'a : comparison and 'b : comparison>() = caching<'a, 'b>()
 
     let train(query: TrainingQuery<_,_>)(cache: Cache<_,_>) = 
         cache
