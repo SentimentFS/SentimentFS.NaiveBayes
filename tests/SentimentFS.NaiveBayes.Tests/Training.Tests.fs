@@ -12,7 +12,7 @@ module Trainer =
         testList "Trainer" [
             testList "empty" [
                 testCase "test get empty trainer function" <| fun _ ->
-                    let subject = Trainer.empty<int, string>() |> Trainer.get
+                    let subject = Trainer.empty<int, string>(None) |> Trainer.get
                     Expect.isNone subject "should be None"
             ]
         ] 
