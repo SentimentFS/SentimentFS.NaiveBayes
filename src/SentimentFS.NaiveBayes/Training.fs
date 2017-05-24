@@ -11,7 +11,7 @@ module Trainer =
         (Cache.empty<State<'a,'b>>(), match config with Some c -> c | None -> Config.Default()) 
 
     let train(query: TrainingQuery<_,_>)(cache: Cache<State<_, _>>, config: Config) = 
-        cache
+        (cache, config)
 
     let get(cache: Cache<State<_, _>>, _: Config) =
         cache |> Cache.get(StateKey)
