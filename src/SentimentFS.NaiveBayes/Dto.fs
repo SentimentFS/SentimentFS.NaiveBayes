@@ -5,11 +5,11 @@ type ProbabilityModel =
 
 type ClassificationScore<'a when 'a : comparison>  = { score: Map<'a, double> }
 
-type TrainingQuery<'a, 'b when 'a : comparison and 'b : comparison> = { value: 'a; category: 'b; weight : int option }
+type TrainingQuery<'a when 'a : comparison> = { value: string; category: 'a; weight : int option }
 
-type Category<'a when 'a: comparison> = { trainings: int; tokens: Map<'a, int> }
+type Category = { trainings: int; tokens: Map<string, int> }
 
-type State<'a, 'b when 'a : comparison and 'b : comparison> = { categories: Map<'a, Category<'b>> }
+type State<'a when 'a : comparison> = { categories: Map<'a, Category> }
 
 type Config = { model : ProbabilityModel; defaultWeight: int; stem: string -> string; stopWords: string list }
     with static member Default() = { stem = id; stopWords = []; model = ProbabilityModel.Naive; defaultWeight = 1 }
@@ -17,4 +17,4 @@ type Config = { model : ProbabilityModel; defaultWeight: int; stem: string -> st
 module State = 
     
     [<CompiledName("Empty")>]
-    let empty() = { categories = Map.empty<'a, Category<'b>> }
+    let empty() = { categories = Map.empty<'a, Category> }

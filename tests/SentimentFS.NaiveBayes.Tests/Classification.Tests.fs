@@ -10,7 +10,7 @@ module Classifier =
         testList "State" [
             testList "empty" [
                 testCase "test get empty state function" <| fun _ ->
-                    let subject: State<int, string>  = State.empty()
-                    Expect.equal subject ({ categories = Map.empty<int, Category<string>> }) "should equal"
+                    let subject: State<int>  = State.empty()
+                    Expect.equal subject ({ categories = Map.empty<int, Category> }) "should equal"
             ]
         ] 
