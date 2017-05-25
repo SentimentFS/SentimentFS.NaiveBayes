@@ -11,6 +11,6 @@ module State =
             testList "empty" [
                 testCase "test get empty state function" <| fun _ ->
                     let subject: State<int>  = State.empty()
-                    Expect.equal subject ({ categories = Map.empty<int, Category> }) "should equal"
+                    Expect.equal subject ({ categories = Map.empty<int, Category>; trainings = 0 }) "should equal"
             ]
         ] 

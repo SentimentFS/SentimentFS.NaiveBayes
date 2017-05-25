@@ -17,8 +17,11 @@ module Trainer =
             ]
             testList "train" [
                 testCase "test train function (one training)" <| fun _ -> 
-                    let subject = Trainer.empty<int>(None) |> Trainer.train({ value = "test"; category = 2; weight = None }) |> Trainer.get
+                    let subject = Trainer.empty<int>(None) |> Trainer.train({ value = "test"; category = 2; weight = None }) |> Trainer.get                  
                     Expect.isSome subject "should be some"
+            
+                    Expect.equal (subject.Value.trainings) (1) "trainings quantity should equal 1"
+
                     let categoryOpt = subject.Value.categories.TryFind(2)
                     Expect.isSome categoryOpt "category of 2 should be some"
                     Expect.equal (categoryOpt.Value) ({ trainings = 1; tokens = ([("test", 1)] |> Map.ofList) }) "should"
@@ -28,6 +31,9 @@ module Trainer =
                                     |> Trainer.train({ value = "test2"; category = 2; weight = None })
                                     |> Trainer.get
                     Expect.isSome subject "should be some"
+
+                    Expect.equal (subject.Value.trainings) (2) "trainings quantity should equal 2"
+                    
                     let categoryOpt = subject.Value.categories.TryFind(2)
                     Expect.isSome categoryOpt "category of 2 should be some"
                     Expect.equal (categoryOpt.Value) ({ trainings = 2; tokens = ([("test", 1); ("test2", 1)] |> Map.ofList) }) "should"
@@ -38,6 +44,8 @@ module Trainer =
                                     |> Trainer.get
                     Expect.isSome subject "should be some"
                     
+                    Expect.equal (subject.Value.trainings) (2) "trainings quantity should equal 2"
+
                     let categoryOpt = subject.Value.categories.TryFind(2)
                     Expect.isSome categoryOpt "category of 2 should be some"
                     Expect.equal (categoryOpt.Value) ({ trainings = 1; tokens = ([("test", 1)] |> Map.ofList) }) "should"
