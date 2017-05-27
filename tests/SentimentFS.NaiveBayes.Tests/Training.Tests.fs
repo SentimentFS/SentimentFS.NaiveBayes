@@ -12,12 +12,20 @@ module Trainer =
         testList "Trainer" [
             testList "empty" [
                 testCase "test get empty trainer function" <| fun _ ->
-                    let subject = Trainer.empty<int>(None) |> Trainer.get
+                    let subject = Trainer.init<int>(None) |> Trainer.get
                     Expect.isNone subject "should be None"
+            ]
+            testList "parseTokens" [
+               testCase "parse" <| fun _ -> 
+                  let (result, _, _) = Trainer.init(None) 
+                                        |> Trainer.parseTokens("cute dog")
+                  Expect.equal (result) ([("cute"; "dog"]) "tokens should has two keys"
             ]
             testList "train" [
                 testCase "test train function (one training)" <| fun _ -> 
-                    let subject = Trainer.empty<int>(None) |> Trainer.train({ value = "test"; category = 2; weight = None }) |> Trainer.get                  
+                    let subject = Trainer.init<int>(None) 
+                                    |> Trainer.train({ value = "test"; category = 2; weight = None }) 
+                                    |> Trainer.get                  
                     Expect.isSome subject "should be some"
             
                     Expect.equal (subject.Value.trainings) (1) "trainings quantity should equal 1"
@@ -26,7 +34,7 @@ module Trainer =
                     Expect.isSome categoryOpt "category of 2 should be some"
                     Expect.equal (categoryOpt.Value) ({ trainings = 1; tokens = ([("test", 1)] |> Map.ofList) }) "should"
                 testCase "test train function (two training, one category)" <| fun _ -> 
-                    let subject = Trainer.empty<int>(None) 
+                    let subject = Trainer.init<int>(None) 
                                     |> Trainer.train({ value = "test"; category = 2; weight = None }) 
                                     |> Trainer.train({ value = "test2"; category = 2; weight = None })
                                     |> Trainer.get
@@ -38,7 +46,7 @@ module Trainer =
                     Expect.isSome categoryOpt "category of 2 should be some"
                     Expect.equal (categoryOpt.Value) ({ trainings = 2; tokens = ([("test", 1); ("test2", 1)] |> Map.ofList) }) "should"
                 testCase "test train function (two training, two category)" <| fun _ -> 
-                    let subject = Trainer.empty<int>(None) 
+                    let subject = Trainer.init<int>(None) 
                                     |> Trainer.train({ value = "test"; category = 2; weight = None }) 
                                     |> Trainer.train({ value = "test2"; category = 1; weight = None })
                                     |> Trainer.get

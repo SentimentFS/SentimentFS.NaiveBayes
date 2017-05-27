@@ -17,6 +17,7 @@
   <ItemGroup>
     <PackageReference Include="FSharp.Core" Version="4.1.*" />
     <PackageReference Include="SentimentFS.Core" Version="1.0.0-*" />
+    <PackageReference Include="SentimentFS.TextUtilities" Version="1.0.0-*" />
     <PackageReference Include="FSharp.NET.Sdk" Version="1.0.*" PrivateAssets="All" />
   </ItemGroup>
 
