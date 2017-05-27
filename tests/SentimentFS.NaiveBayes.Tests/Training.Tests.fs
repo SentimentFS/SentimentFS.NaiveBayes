@@ -17,9 +17,8 @@ module Trainer =
             ]
             testList "parseTokens" [
                testCase "parse" <| fun _ -> 
-                  let (result, _, _) = Trainer.init(None) 
-                                        |> Trainer.parseTokens("cute dog")
-                  Expect.equal (result) ([("cute"; "dog"]) "tokens should has two keys"
+                  let tokens = "cute dog" |> Trainer.parseTokens(Config.Default())
+                  Expect.equal (tokens) (["cute"; "dog"]) "tokens should has two keys"
             ]
             testList "train" [
                 testCase "test train function (one training)" <| fun _ -> 

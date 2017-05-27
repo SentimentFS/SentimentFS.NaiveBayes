@@ -12,14 +12,20 @@ module Trainer =
     let init<'a when 'a : comparison>(config: Config option) = 
         (Cache.empty<State<'a>>(), match config with Some c -> c | None -> Config.Default()) 
 
-    let parseTokens(word: string)(cache: Cache<State<_>>, config: Config) =
+    let parseTokens(config: Config)(word: string) =
         let result = word 
                         |> Tokenizer.tokenize 
                         |> Filter.filterOut(config.stopWords) 
                         |> List.map(config.stem) 
-        (result, cache, config)
-    let train(query: TrainingQuery<_>)(cache: Cache<State<_>>, config: Config) = 
+        result
+    let train(query: TrainingQuery<_>)(cache: Cache<State<_>>, config: Config) =
+        let state = 
+           match cache |> Cache.get(StateKey) with
+           | Some oldState -> oldState
+           | None -> State.empty()
+        let tokens = (query.value) |> parseTokens(config)
         (cache, config)
+         
 
     let get(cache: Cache<State<_>>, _: Config) =
         cache |> Cache.get(StateKey)
