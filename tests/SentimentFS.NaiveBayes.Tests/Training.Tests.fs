@@ -26,6 +26,20 @@ module Trainer =
                     Expect.equal (subject.trainings) 1 "should equal 1"
                 }
             ]
+            testList "categorize" [
+               testCase "when category no exist in state" <| fun _ ->
+                   let subject = (["cute"; "dog"], Config.Default(), State.empty()) |> Trainer.categorize(2)
+                   Expect.isTrue (subject.categories.ContainsKey(2)) "should contain 2"
+                   Expect.equal ((subject.categories.[2]).trainings) 1 "trainings should equal 1"
+                   Expect.equal ((subject.categories.[2]).tokens) ([("cute", 1); ("dog", 1)] |> Map.ofList) "trainings should equal 1"
+               testCase "when category exist in state" <| fun _ ->
+                   let state = {categories = ([(2, { trainings = 1; tokens = ([("test", 2)] |> Map.ofList) })] |> Map.ofList); trainings = 1 }
+                   Expect.isTrue (state.categories.ContainsKey(2)) "should contain 2"
+                   let subject = (["cute"; "dog"], Config.Default(), state) |> Trainer.categorize(2)
+                   Expect.isTrue (subject.categories.ContainsKey(2)) "should contain 2"
+                   Expect.equal ((subject.categories.[2]).trainings) 2 "trainings should equal 2"
+                   Expect.equal ((subject.categories.[2]).tokens) ([("test", 1); ("cute", 1); ("dog", 1)] |> Map.ofList) ""
+            ]
             testList "train" [
                 testCase "test train function (one training)" <| fun _ ->
                     let subject = Trainer.init<int>(None)

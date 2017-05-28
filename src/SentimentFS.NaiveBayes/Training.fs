@@ -22,6 +22,17 @@ module Trainer =
     let incrementTrainings(state: State<_>) =
         { state with trainings = state.trainings + 1  }
 
+
+    let categorize(category: _)(tokens: string list, config: Config, state: State<_>) =
+        let accumulate = fun oldTokens -> tokens |> Map.mapValues(config.defaultWeight) |> Map.merge (fun (_, v1, v2) -> v1 + v2 ) oldTokens
+        let newCategory =
+            match state.categories.TryFind(category) with
+            | Some cat ->
+                { trainings = cat.trainings; tokens = (cat.tokens |> accumulate) }
+            | None ->
+                { trainings = 1; tokens = Map.empty<string, int> |> accumulate }
+        { state with categories = (state.categories.Add(category, newCategory)) }
+
     let train(query: TrainingQuery<_>)(cache: Cache<State<_>>, config: Config) =
         let state =
            match cache |> Cache.get(StateKey) with
