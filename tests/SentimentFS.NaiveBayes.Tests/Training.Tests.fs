@@ -33,7 +33,7 @@ module Trainer =
                    Expect.equal ((subject.categories.[2]).trainings) 1 "trainings should equal 1"
                    Expect.equal ((subject.categories.[2]).tokens) ([("cute", 1); ("dog", 1)] |> Map.ofList) "trainings should equal 1"
                testCase "when category exist in state" <| fun _ ->
-                   let state = {categories = ([(2, { trainings = 1; tokens = ([("test", 2)] |> Map.ofList) })] |> Map.ofList); trainings = 1 }
+                   let state = {categories = ([(2, { trainings = 1; tokens = ([("test", 1)] |> Map.ofList) })] |> Map.ofList); trainings = 1 }
                    Expect.isTrue (state.categories.ContainsKey(2)) "should contain 2"
                    let subject = (Config.Default(), state) |> Trainer.categorize(2, ["cute"; "dog"])
                    Expect.isTrue (subject.categories.ContainsKey(2)) "should contain 2"
