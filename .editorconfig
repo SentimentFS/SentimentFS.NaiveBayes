@@ -15,7 +15,7 @@ indent_size = 4
 indent_size = 4
 
 # Xml project files
-[*.{csproj,vcxproj,vcxproj.filters,proj,nativeproj,locproj}]
+[*.{csproj,fsproj,vcxproj.filters,proj,nativeproj,locproj}]
 indent_size = 2
 
 # Xml files
