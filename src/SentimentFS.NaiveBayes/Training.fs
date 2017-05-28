@@ -28,10 +28,8 @@ module Trainer =
         let newCategory =
             match state.categories.TryFind(category) with
             | Some cat ->
-                printf "Some"
                 { trainings = cat.trainings + 1; tokens = (cat.tokens |> accumulate) }
             | None ->
-                printf "None"
                 { trainings = 1; tokens = Map.empty<string, int> |> accumulate }
         { state with categories = (state.categories.Add(category, newCategory)) }
 
