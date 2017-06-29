@@ -3,7 +3,7 @@ namespace SentimentFS.NaiveBayes.Dto
 type ProbabilityModel =
     | Naive
 
-type ClassificationScore<'a when 'a : comparison>  = { score: Map<'a, double> }
+type ClassificationScore<'a when 'a : comparison>  = { score: Map<'a, float> }
 
 type TrainingQuery<'a when 'a : comparison> = { value: string; category: 'a; weight : int option }
 
@@ -14,8 +14,8 @@ type State<'a when 'a : comparison> = { categories: Map<'a, Category>; trainings
 type Config = { model : ProbabilityModel; defaultWeight: int; stem: string -> string; stopWords: string list }
     with static member Default() = { stem = id; stopWords = []; model = ProbabilityModel.Naive; defaultWeight = 1 }
 
-module State = 
-    
+module State =
+
     [<CompiledName("Empty")>]
     let empty() = { categories = Map.empty<'a, Category>; trainings = 0 }
 
