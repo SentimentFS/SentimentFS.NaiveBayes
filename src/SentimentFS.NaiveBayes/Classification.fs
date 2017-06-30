@@ -8,8 +8,14 @@ module NaiveProbability =
         let allTokensQuantity = l |> List.sumBy (fun (k,v) -> ( v.tokens |> Map.toList |> List.sumBy (fun (_, v1) -> v1 |> float)))
         l |> List.map(fun (k,v) -> (k, ((v.tokens |> Map.toList |> List.sumBy (fun (_, v1) -> v1)) |> float) / allTokensQuantity)) |> Map.ofList
     let internal aposterori (element: _) (category: _) (state: State<_>) =
-        state.categories.TryFind(category)
-            |> Option.bind(fun cat -> cat.tokens.TryFind(element))
+        match state.categories.TryFind(category) with
+        | Some cat ->
+            match cat.tokens.TryFind(element) with
+            | Some v ->
+                let allQ = cat.tokens |> Map.toList |> List.sumBy (fun (_,v) -> v) |> float
+                (v |> float) / allQ
+            | None -> 1.0
+        | None -> 1.0
 
     let compute (elements: _ list) (state: State<_>) =
         let func cat = (elements |> List.fold(fun acc x -> acc * (aposterori x cat state)) 1.0)
