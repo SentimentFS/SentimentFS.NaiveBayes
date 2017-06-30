@@ -31,6 +31,7 @@ module Classifier =
     open SentimentFS.Core.Caching
     open SentimentFS.Core
     open SentimentFS.TextUtilities
+    open SentimentFS.NaiveBayes.Training
     let internal parseTokens(config: Config)(word: string) =
         let result = word
                         |> Tokenizer.tokenize
@@ -41,4 +42,8 @@ module Classifier =
     let classify(element: _)(query: TrainingQuery<_>)(cache: Cache<State<_>>, config: Config)  =
         let tokens = element |> parseTokens(config)
         match config.model with
-        | _ -> { }
+        | _ ->
+            match Trainer.get(cache, config) with
+            | Some state ->
+                { score = (NaiveProbability.compute(tokens)(state)) }
+            | None -> { score = Map.empty<_, float> }
