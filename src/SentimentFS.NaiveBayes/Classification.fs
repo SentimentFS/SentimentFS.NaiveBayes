@@ -22,7 +22,7 @@ module NaiveProbability =
         let aprioriP = state |> apriori
         state.categories
                 |> Map.toList
-                |> List.map(fun (k, v) -> (k, ((func k) * match aprioriP.TryFind(k) with Some vl -> vl | None -> 1.0)))
+                |> List.map(fun (k, v) -> (k, (match (func k) with | prob when prob = 1.0 -> 0.0 | prob -> prob * match aprioriP.TryFind(k) with Some vl -> vl | None -> 1.0)))
                 |> Map.ofList
 
 
@@ -39,7 +39,7 @@ module Classifier =
                         |> List.map(config.stem)
         result
 
-    let classify(element: _)(query: TrainingQuery<_>)(cache: Cache<State<_>>, config: Config)  =
+    let classify(element: _)(cache: Cache<State<_>>, config: Config)  =
         let tokens = element |> parseTokens(config)
         match config.model with
         | _ ->
