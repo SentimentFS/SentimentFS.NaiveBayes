@@ -14,18 +14,31 @@ module NaiveProbability =
             | Some v ->
                 let allQ = cat.tokens |> Map.toList |> List.sumBy (fun (_,v) -> v) |> float
                 (v |> float) / allQ
-            | None -> 1.0
-        | None -> 1.0
+            | None -> 0.0
+        | None -> 0.0
 
     let compute (elements: _ list) (state: State<_>) =
-        let func cat = (elements |> List.fold(fun acc x -> acc * (aposterori x cat state)) 1.0)
+        let func cat = (elements |> List.map(fun x -> (aposterori x cat state)) |> List.filter(fun x -> ((Math.Abs(x)) >= Double.Epsilon) ) |> List.fold(( * )) 1.0)
         let aprioriP = state |> apriori
         state.categories
                 |> Map.toList
-                |> List.map(fun (k, v) -> (k, (func k) * match aprioriP.TryFind(k) with Some vl -> vl | None -> 1.0))
+                |> List.map(fun (k, v) -> (k, ((func k) * match aprioriP.TryFind(k) with Some vl -> vl | None -> 1.0)))
+                |> Map.ofList
 
 
 module Classifier =
     open SentimentFS.NaiveBayes.Dto
     open SentimentFS.Core.Caching
-    let classify(element: _)(cache: Cache<State<_>>) = { score = Map.empty<_, float> }
+    open SentimentFS.Core
+    open SentimentFS.TextUtilities
+    let internal parseTokens(config: Config)(word: string) =
+        let result = word
+                        |> Tokenizer.tokenize
+                        |> Filter.filterOut(config.stopWords)
+                        |> List.map(config.stem)
+        result
+
+    let classify(element: _)(query: TrainingQuery<_>)(cache: Cache<State<_>>, config: Config)  =
+        let tokens = element |> parseTokens(config)
+        match config.model with
+        | _ -> { }
