@@ -9,6 +9,11 @@ type Emotion =
     | Negative
     | Positive
 
+type Fruit =
+    | Apple
+    | Orange
+    | Banana
+
 module Classifier =
 
     [<Tests>]
@@ -35,5 +40,20 @@ module Classifier =
 
                     Expect.equal (subject.score.TryFind(Negative)) (Some 0.0) "should equal"
                     Expect.floatClose Accuracy.low (subject.score.TryFind(Positive).Value) (0.05555555556) "should equal"
+                test "Fruit classification" {
+                    let subject = Trainer.init<Fruit>(None)
+                                    |> Trainer.train({ value = "red sweet"; category = Apple; weight = Some 2 })
+                                    |> Trainer.train({ value = "green"; category = Apple; weight = None })
+                                    |> Trainer.train({ value = "round"; category = Apple; weight = Some 4 })
+                                    |> Trainer.train({ value = "sweet"; category = Banana; weight = Some 2 })
+                                    |> Trainer.train({ value = "green"; category = Banana; weight = None })
+                                    |> Trainer.train({ value = "yellow long"; category = Banana; weight = Some 4 })
+                                    |> Trainer.train({ value = "red"; category = Orange; weight = Some 2 })
+                                    |> Trainer.train({ value = "yellow sweet"; category = Orange; weight = None })
+                                    |> Trainer.train({ value = "round"; category = Orange; weight = Some 4 })
+                                    |> Classifier.classify("Maybe green maybe red but definitely round and sweet.")
+
+                    Expect.isOk (Ok(2)) "should be ok"
+                }
             ]
         ]

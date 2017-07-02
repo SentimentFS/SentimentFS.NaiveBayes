@@ -23,15 +23,17 @@ module Trainer =
         { state with trainings = state.trainings + 1  }
 
 
-    let categorize(category: _, tokens: string list)(config: Config, state: State<_>) =
-        let accumulate = fun oldTokens -> tokens |> Map.mapValues(config.defaultWeight) |> Map.merge (fun (_, v1, v2) -> v1 + v2 ) oldTokens
+    let categorize(query: TrainingQuery<_>, tokens: string list)(config: Config, state: State<_>) =
+        let accumulate = fun oldTokens -> tokens
+                                            |> Map.mapValues(match query.weight with Some x -> x | None ->config.defaultWeight)
+                                            |> Map.merge (fun (_, v1, v2) -> v1 + v2 ) oldTokens
         let newCategory =
-            match state.categories.TryFind(category) with
+            match state.categories.TryFind(query.category) with
             | Some cat ->
                 { trainings = cat.trainings + 1; tokens = (cat.tokens |> accumulate) }
             | None ->
                 { trainings = 1; tokens = Map.empty<string, int> |> accumulate }
-        { state with categories = (state.categories.Add(category, newCategory)) }
+        { state with categories = (state.categories.Add(query.category, newCategory)) }
 
     let train(query: TrainingQuery<_>)(cache: Cache<State<_>>, config: Config) =
         let state =
@@ -39,7 +41,7 @@ module Trainer =
            | Some oldState -> oldState
            | None -> State.empty()
         let parsedTokens = (query.value) |> parseTokens(config)
-        let newState = (config, state) |> categorize(query.category, parsedTokens) |> incrementTrainings
+        let newState = (config, state) |> categorize(query, parsedTokens) |> incrementTrainings
         (cache |> Cache.set(StateKey, newState), config)
 
 

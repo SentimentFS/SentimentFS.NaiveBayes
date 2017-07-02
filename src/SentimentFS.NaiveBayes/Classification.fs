@@ -14,11 +14,11 @@ module NaiveProbability =
             | Some v ->
                 let allQ = cat.tokens |> Map.toList |> List.sumBy (fun (_,v) -> v) |> float
                 (v |> float) / allQ
-            | None -> 0.0
-        | None -> 0.0
+            | None -> 1.0
+        | None -> 1.0
 
     let compute (elements: _ list) (state: State<_>) =
-        let func cat = (elements |> List.map(fun x -> (aposterori x cat state)) |> List.filter(fun x -> ((Math.Abs(x)) >= Double.Epsilon) ) |> List.fold(( * )) 1.0)
+        let func cat = (elements |> List.map(fun x -> (aposterori x cat state)) |> List.fold(( * )) 1.0)
         let aprioriP = state |> apriori
         state.categories
                 |> Map.toList
