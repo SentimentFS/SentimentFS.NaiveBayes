@@ -39,11 +39,11 @@ module Classifier =
                         |> List.map(config.stem)
         result
 
-    let classify(element: _)(cache: Cache<State<_>>, config: Config)  =
+    let classify(element: _) struct (cache: Cache<State<_>>, config: Config)  =
         let tokens = element |> parseTokens(config)
         match config.model with
         | _ ->
-            match Trainer.get(cache, config) with
+            match Trainer.get struct (cache, config) with
             | Some state ->
                 { score = (NaiveProbability.compute(tokens)(state)) }
             | None -> { score = Map.empty<_, float> }
