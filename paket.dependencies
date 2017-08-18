@@ -8,6 +8,7 @@ nuget FSharp.Core >= 4.1.0
 nuget System.ValueTuple >= 4.3.1
 nuget SentimentFS.Core >= 1.0.0-CI00012
 nuget SentimentFS.TextUtilities >= 0.6.0
+nuget Microsoft.Extensions.Primitives 1.1
 
 group Build
     source https://www.nuget.org/api/v2
