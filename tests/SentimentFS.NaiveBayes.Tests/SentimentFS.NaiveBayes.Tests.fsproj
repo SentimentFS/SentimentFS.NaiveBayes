@@ -1,11 +1,9 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="FSharp.NET.Sdk;Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <TargetFrameworks>netcoreapp2.0;net461</TargetFrameworks>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="Dto.Tests.fs" />
+  <ItemGroup>"Dto.Tests.fs" />
     <Compile Include="Training.Tests.fs" />
     <Compile Include="Classification.Tests.fs" />
     <Compile Include="Main.fs" />

@@ -1,11 +1,22 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="FSharp.NET.Sdk;Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard1.6</TargetFramework>
-    <Version>1.1.0</Version>
-    <Authors>Dominik Kotecki</Authors>
-    <Company>SentimentFS</Company>
+    <TargetFrameworks>netstandard1.6;net461</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup>
     <Description>SentimentFS NaiveBayes Implementation</Description>
+    <Title>SentimentFS.NaiveBayes</Title>
+    <PackageTags>f#, fsharp</PackageTags>
+    <PackageProjectUrl>https://github.com/SentimentFS/SentimentFS.NaiveBayes</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/SentimentFS/SentimentFS.NaiveBayes/blob/master/LICENSE.md</PackageLicenseUrl>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <RepositoryType>git</RepositoryType>
+    <Authors>dominikus1993</Authors>
+    <RepositoryUrl>https://github.com/SentimentFS/SentimentFS.NaiveBayes</RepositoryUrl>
+    <!-- owners is not supported in MSBuild -->
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <Optimize>true</Optimize>
+    <Tailcalls>true</Tailcalls>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Dto.fs" />

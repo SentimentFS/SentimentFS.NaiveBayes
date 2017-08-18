@@ -441,3 +441,4 @@ bin
 # BizTalk build output
 
 # End of https://www.gitignore.io/api/f#,csharp,visualstudio,visualstudiocode
+packages/
