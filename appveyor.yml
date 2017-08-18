@@ -1,21 +1,9 @@
-
-# version format
-version: 0.0.1.{build}
-
-# branches to build
-branches:
-  # blacklist
-  except:
-    - gh-pages
-
-# Do not build on tags (GitHub only)
-skip_tags: true
-
-build_script:  
-- ps: .\build.ps1
-
+init:
+  - git config --global core.autocrlf input
+build_script:
+  - cmd: build.cmd
 test: off
-
-artifacts:  
-- path: '**\BayesFS.*.nupkg' 
-  name: NuGet
+version: 0.0.1.{build}
+artifacts:
+  - path: bin
+    name: bin

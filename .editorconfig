@@ -1,33 +1,25 @@
-# EditorConfig is awesome: http://EditorConfig.org
+# EditorConfig is awesome:
+http://EditorConfig.org
 
 # top-most EditorConfig file
 root = true
 
-# Unix-style newlines with a newline ending every file
+# Default settings:
+# A newline ending every file
+# Use 4 spaces as indentation
 [*]
 insert_final_newline = true
-charset = utf-8
-trim_trailing_whitespace = true
 indent_style = space
 indent_size = 4
 
-[*.styl]
-indent_size = 4
+[*.{fs,fsi,fsx,config}]
+charset = utf-8
+trim_trailing_whitespace = true
 
-# Xml project files
-[*.{csproj,fsproj,vcxproj.filters,proj,nativeproj,locproj}]
+[paket.*]
+trim_trailing_whitespace = true
 indent_size = 2
 
-# Xml files
-[*.{xml,stylecop,resx,ruleset}]
+[*.paket.references]
+trim_trailing_whitespace = true
 indent_size = 2
-
-# Xml config files
-[*.{props,targets,config,nuspec}]
-indent_size = 2
-
-# Shell scripts
-[*.sh]
-end_of_line = lf
-[*.{cmd,bat,ps1}]
-end_of_line = crlf
