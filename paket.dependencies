@@ -1,0 +1,7 @@
+source https://api.nuget.org/v3/index.json
+source https://www.myget.org/F/sentimentalanalysisml/api/v3/index.json
+source https://www.myget.org/F/sentimentfs/api/v2
+
+nuget Expecto >= 5.0.0-0
+nuget FSharp.Core >= 4.1.0
+nuget System.ValueTuple 4.3.1

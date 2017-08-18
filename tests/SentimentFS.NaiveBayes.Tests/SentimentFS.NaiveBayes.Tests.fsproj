@@ -1,27 +1,17 @@
-﻿<Project Sdk="FSharp.NET.Sdk;Microsoft.NET.Sdk">
-
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="FSharp.NET.Sdk;Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp1.1</TargetFramework>
   </PropertyGroup>
-
   <ItemGroup>
     <Compile Include="Dto.Tests.fs" />
     <Compile Include="Training.Tests.fs" />
     <Compile Include="Classification.Tests.fs" />
     <Compile Include="Main.fs" />
   </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="FSharp.Core" Version="4.1.*" />
-    <PackageReference Include="FSharp.NET.Sdk" Version="1.0.*" PrivateAssets="All" />
-    <PackageReference Include="SentimentFS.Core" Version="1.0.0-*" />
-    <PackageReference Include="System.ValueTuple" Version="4.3.1" />
-    <PackageReference Include="Expecto" Version="5.0.0-*" />
-  </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\src\SentimentFS.NaiveBayes\SentimentFS.NaiveBayes.fsproj" />
   </ItemGroup>
-
+  <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

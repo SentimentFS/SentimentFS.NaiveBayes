@@ -1,4 +1,5 @@
-﻿<Project Sdk="FSharp.NET.Sdk;Microsoft.NET.Sdk">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="FSharp.NET.Sdk;Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard1.6</TargetFramework>
     <Version>1.1.0</Version>
@@ -11,11 +12,5 @@
     <Compile Include="Training.fs" />
     <Compile Include="Classification.fs" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="FSharp.Core" Version="4.1.*" />
-    <PackageReference Include="SentimentFS.Core" Version="1.0.0-*" />
-    <PackageReference Include="SentimentFS.TextUtilities" Version="1.0.0-*" />
-    <PackageReference Include="FSharp.NET.Sdk" Version="1.0.*" PrivateAssets="All" />
-    <PackageReference Include="System.ValueTuple" Version="4.3.1" />
-  </ItemGroup>
+  <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

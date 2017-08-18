@@ -3,6 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{13D1F68A-E683-45AA-8ED8-A20AD99A7177}"
+	ProjectSection(SolutionItems) = preProject
+		paket.dependencies = paket.dependencies
+	EndProjectSection
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{DF4B61E5-AD90-4AF1-8506-D5BD03F3BCE6}"
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "SentimentFS.NaiveBayes", "src\SentimentFS.NaiveBayes\SentimentFS.NaiveBayes.fsproj", "{4F5EA124-C1C2-4B69-8BFF-2B7A9F53B0C2}"
