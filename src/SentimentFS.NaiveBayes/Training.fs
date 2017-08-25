@@ -5,12 +5,8 @@ module Trainer =
     open SentimentFS.Core.Caching
     open SentimentFS.Core
     open SentimentFS.TextUtilities
-
-    [<Literal>]
-    let internal StateKey = "SentimentFS.NaiveBayes.Training.Trainer.StateKey"
-
-    let init<'a when 'a : comparison>(config: Config option) =
-        struct (Cache.empty<State<'a>>(), match config with Some c -> c | None -> Config.Default())
+    let init<'a when 'a : comparison>(config: Config option): struct (State<'a> option * Config) =
+        struct (None, match config with Some c -> c | None -> Config.Default())
 
     let parseTokens(config: Config)(word: string) =
         let result = word
@@ -35,16 +31,12 @@ module Trainer =
                 { trainings = 1; tokens = Map.empty<string, int> |> accumulate }
         { state with categories = (state.categories.Add(query.category, newCategory)) }
 
-    let train(query: TrainingQuery<_>) struct (cache: Cache<State<_>>, config: Config) =
+    let train(query: TrainingQuery<_>) struct (stateOpt: State<_> option, config: Config) =
         let state =
-           match cache |> Cache.get(StateKey) with
+           match stateOpt with
            | Some oldState -> oldState
            | None -> State.empty()
         let parsedTokens = (query.value) |> parseTokens(config)
         let newState = (config, state) |> categorize(query, parsedTokens) |> incrementTrainings
-        struct (cache |> Cache.set(StateKey, newState), config)
-
-
-    let get struct (cache: Cache<State<_>>, _: Config) =
-        cache |> Cache.get(StateKey)
+        struct (Some newState, config)
 
