@@ -6,7 +6,7 @@ open SentimentFS.NaiveBayes.Dto
 module State =
 
     [<Tests>]
-    let tests = 
+    let tests =
         testList "State" [
             testList "empty" [
                 testCase "test get empty state function" <| fun _ ->
@@ -19,4 +19,4 @@ module State =
                     let subject: State<int>  = State.empty() |> State.incrementTrainings
                     Expect.equal subject ({ categories = Map.empty<int, Category>; trainings = 1 }) "should equal"
             ]
-        ] 
+        ]
