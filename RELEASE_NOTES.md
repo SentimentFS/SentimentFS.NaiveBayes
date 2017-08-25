@@ -1,3 +1,6 @@
+#### 1.2.1 - 25.08.2017
+* remove internal cache
+
 #### 1.1.1 - 18.08.2017
 * update dependencies
 
