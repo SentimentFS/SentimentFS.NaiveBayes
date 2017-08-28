@@ -28,8 +28,7 @@ module Classifier =
                                     |> Trainer.train({ value = negativeText; category = Negative; weight = None })
                                     |> Classifier.classify("My brother hate java")
 
-                    Expect.equal (subject.score.TryFind(Positive)) (Some 0.0) "should equal"
-                    Expect.floatClose Accuracy.low (subject.score.TryFind(Negative).Value) (0.05555555556) "should equal"
+                    Expect.isGreaterThan (subject.score.TryFind(Negative).Value) (subject.score.TryFind(Positive).Value) "negative score should be greater than positive"
                 testCase "test when text is positive" <| fun _ ->
                     let positiveText = "I love fsharp"
                     let negativeText = "I hate java"
@@ -38,8 +37,7 @@ module Classifier =
                                     |> Trainer.train({ value = negativeText; category = Negative; weight = None })
                                     |> Classifier.classify("My brother love fsharp")
 
-                    Expect.equal (subject.score.TryFind(Negative)) (Some 0.0) "should equal"
-                    Expect.floatClose Accuracy.low (subject.score.TryFind(Positive).Value) (0.05555555556) "should equal"
+                    Expect.isGreaterThan (subject.score.TryFind(Positive).Value) (subject.score.TryFind(Negative).Value) "negative score should be greater than positive"
                 test "Fruit classification" {
                     let subject = Trainer.init<Fruit>(None)
                                     |> Trainer.train({ value = "red sweet"; category = Apple; weight = Some 2 })
