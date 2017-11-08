@@ -2,3 +2,4 @@ FSharp.Core
 System.ValueTuple
 SentimentFS.Core
 SentimentFS.TextUtilities
+SentimentFS.Common

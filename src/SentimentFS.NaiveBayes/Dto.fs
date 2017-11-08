@@ -12,7 +12,7 @@ type Category = { trainings: int; tokens: Map<string, int> }
 type State<'a when 'a : comparison> = { categories: Map<'a, Category>; trainings: int }
 
 type Config = { model : ProbabilityModel; defaultWeight: int; stem: string -> string; stopWords: string list }
-    with static member Default() = { stem = id; stopWords = []; model = ProbabilityModel.Naive; defaultWeight = 1 }
+    with static member Default() = { stem = id; stopWords = []; model = Naive; defaultWeight = 1 }
 
 module State =
 

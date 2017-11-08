@@ -2,16 +2,17 @@ namespace SentimentFS.NaiveBayes.Training
 
 module Trainer =
     open SentimentFS.NaiveBayes.Dto
-    open SentimentFS.Core.Caching
     open SentimentFS.Core
     open SentimentFS.TextUtilities
+    open SentimentFS.Common
+
     let init<'a when 'a : comparison>(config: Config option): struct (State<'a> option * Config) =
         struct (None, match config with Some c -> c | None -> Config.Default())
 
     let parseTokens(config: Config)(word: string) =
         let result = word
                         |> Tokenizer.tokenize
-                        |> Filter.filterOut(config.stopWords)
+                        |> List.filterOut(config.stopWords)
                         |> List.map(config.stem)
         result
 
