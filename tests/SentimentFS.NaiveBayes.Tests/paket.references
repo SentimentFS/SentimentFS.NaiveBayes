@@ -1,5 +1,5 @@
 FSharp.Core
 Expecto
-SentimentFS.Core
+SentimentFS.Common
 SentimentFS.TextUtilities
 Microsoft.DotNet.Watcher.Tools

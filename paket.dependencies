@@ -5,7 +5,6 @@ source https://www.myget.org/F/sentimentfs/api/v2
 nuget Expecto >= 5.0.0-0
 nuget FSharp.Core >= 4.1.0
 nuget System.ValueTuple >= 4.3.1
-nuget SentimentFS.Core >= 1.1.0
 nuget SentimentFS.Common
 nuget SentimentFS.TextUtilities >= 0.6.0
 nuget Microsoft.Extensions.Primitives < 2.0.0

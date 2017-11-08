@@ -1,7 +1,6 @@
 namespace SentimentFS.NaiveBayes.Tests
 
 open Expecto
-open SentimentFS.Core.Caching
 open SentimentFS.NaiveBayes.Training
 open SentimentFS.NaiveBayes.Dto
 

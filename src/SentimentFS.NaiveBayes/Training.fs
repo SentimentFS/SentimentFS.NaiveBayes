@@ -2,7 +2,6 @@ namespace SentimentFS.NaiveBayes.Training
 
 module Trainer =
     open SentimentFS.NaiveBayes.Dto
-    open SentimentFS.Core
     open SentimentFS.TextUtilities
     open SentimentFS.Common
 
