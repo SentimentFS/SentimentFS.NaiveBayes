@@ -1,3 +1,6 @@
+#### 1.3.0 - 08.11.2017
+* netstandard2.0
+
 #### 1.2.1 - 25.08.2017
 * remove internal cache
 
