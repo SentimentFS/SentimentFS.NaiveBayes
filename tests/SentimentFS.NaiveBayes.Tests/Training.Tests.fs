@@ -12,7 +12,7 @@ module Trainer =
             testList "Naive" [
                 testList "empty" [
                     testCase "test get empty trainer function" <| fun _ ->
-                        let struct (state, config) = Trainer.init<int>(None)
+                        let struct (state, _) = Trainer.init<int>(None)
                         Expect.isNone state "should be None"
                 ]
                 testList "parseTokens" [
@@ -22,7 +22,7 @@ module Trainer =
                 ]
                 testList "incrementTrainings" [
                     test "increment training" {
-                        let subject = State.empty() |> Naive.incrementTrainings
+                        let subject = State.empty() |> State.incrementTrainings
                         Expect.equal (subject.trainings) 1 "should equal 1"
                     }
                 ]

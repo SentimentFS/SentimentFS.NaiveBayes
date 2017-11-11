@@ -11,10 +11,6 @@ module Naive =
                         |> List.map(config.stem)
         result
 
-    let incrementTrainings(state: State<_>) =
-        { state with trainings = state.trainings + 1  }
-
-
     let categorize(query: TrainingQuery<_>, tokens: string list)(config: Config, state: State<_>) =
         let accumulate = fun oldTokens -> tokens
                                             |> Map.mapValues(match query.weight with Some x -> x | None ->config.defaultWeight)
@@ -33,7 +29,7 @@ module Naive =
            | Some oldState -> oldState
            | None -> State.empty()
         let parsedTokens = (query.value) |> parseTokens(config)
-        let newState = (config, state) |> categorize(query, parsedTokens) |> incrementTrainings
+        let newState = (config, state) |> categorize(query, parsedTokens) |> State.incrementTrainings
         struct (Some newState, config)
 
 module Trainer =
