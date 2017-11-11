@@ -3,3 +3,5 @@ Expecto
 SentimentFS.Common
 SentimentFS.TextUtilities
 Microsoft.DotNet.Watcher.Tools
+YoloDev.Expecto.TestSdk
+Microsoft.NET.Test.Sdk

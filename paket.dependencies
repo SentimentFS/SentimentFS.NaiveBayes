@@ -8,6 +8,8 @@ nuget System.ValueTuple >= 4.3.1
 nuget SentimentFS.Common
 nuget SentimentFS.TextUtilities >= 0.6.0
 nuget Microsoft.Extensions.Primitives < 2.0.0
+nuget YoloDev.Expecto.TestSdk
+nuget Microsoft.NET.Test.Sdk
 clitool Microsoft.DotNet.Watcher.Tools
 
 group Build
