@@ -1,10 +1,9 @@
 namespace SentimentFS.NaiveBayes.Training
+open SentimentFS.NaiveBayes.Dto
+open SentimentFS.TextUtilities
+open SentimentFS.Common
 
-module Trainer =
-    open SentimentFS.NaiveBayes.Dto
-    open SentimentFS.TextUtilities
-    open SentimentFS.Common
-
+module Naive =
     let init<'a when 'a : comparison>(config: Config option): struct (State<'a> option * Config) =
         struct (None, match config with Some c -> c | None -> Config.Default())
 
@@ -39,4 +38,11 @@ module Trainer =
         let parsedTokens = (query.value) |> parseTokens(config)
         let newState = (config, state) |> categorize(query, parsedTokens) |> incrementTrainings
         struct (Some newState, config)
+
+module Trainer =
+
+    let train(query: TrainingQuery<_>) struct (stateOpt: State<_> option, config: Config) =
+        match config.model with
+        | Naive -> Naive.train query struct (stateOpt, config)
+
 
