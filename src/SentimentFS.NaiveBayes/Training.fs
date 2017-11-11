@@ -4,9 +4,6 @@ open SentimentFS.TextUtilities
 open SentimentFS.Common
 
 module Naive =
-    let init<'a when 'a : comparison>(config: Config option): struct (State<'a> option * Config) =
-        struct (None, match config with Some c -> c | None -> Config.Default())
-
     let parseTokens(config: Config)(word: string) =
         let result = word
                         |> Tokenizer.tokenize
@@ -40,6 +37,8 @@ module Naive =
         struct (Some newState, config)
 
 module Trainer =
+    let init<'a when 'a : comparison>(config: Config option): struct (State<'a> option * Config) =
+        struct (None, match config with Some c -> c | None -> Config.Default())
 
     let train(query: TrainingQuery<_>) struct (stateOpt: State<_> option, config: Config) =
         match config.model with

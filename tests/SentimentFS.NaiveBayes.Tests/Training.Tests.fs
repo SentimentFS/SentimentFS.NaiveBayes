@@ -12,7 +12,7 @@ module Trainer =
             testList "Naive" [
                 testList "empty" [
                     testCase "test get empty trainer function" <| fun _ ->
-                        let struct (state, config) = Naive.init<int>(None)
+                        let struct (state, config) = Trainer.init<int>(None)
                         Expect.isNone state "should be None"
                 ]
                 testList "parseTokens" [
@@ -42,8 +42,8 @@ module Trainer =
                 ]
                 testList "train" [
                     testCase "test train function (one training)" <| fun _ ->
-                        let struct (subject, _) = Naive.init<int>(None)
-                                                    |> Trainer.train({ value = "test"; category = 2; weight = None })
+                        let struct (subject, _) = Trainer.init<int>(None)
+                                                    |> Naive.train({ value = "test"; category = 2; weight = None })
                         Expect.isSome subject "should be some"
 
                         Expect.equal (subject.Value.trainings) (1) "trainings quantity should equal 1"
@@ -52,9 +52,9 @@ module Trainer =
                         Expect.isSome categoryOpt "category of 2 should be some"
                         Expect.equal (categoryOpt.Value) ({ trainings = 1; tokens = ([("test", 1)] |> Map.ofList) }) "should"
                     testCase "test train function (two training, one category)" <| fun _ ->
-                        let struct (subject, _) = Naive.init<int>(None)
-                                                        |> Trainer.train({ value = "test"; category = 2; weight = None })
-                                                        |> Trainer.train({ value = "test2"; category = 2; weight = None })
+                        let struct (subject, _) = Trainer.init<int>(None)
+                                                        |> Naive.train({ value = "test"; category = 2; weight = None })
+                                                        |> Naive.train({ value = "test2"; category = 2; weight = None })
                         Expect.isSome subject "should be some"
 
                         Expect.equal (subject.Value.trainings) (2) "trainings quantity should equal 2"
@@ -63,9 +63,9 @@ module Trainer =
                         Expect.isSome categoryOpt "category of 2 should be some"
                         Expect.equal (categoryOpt.Value) ({ trainings = 2; tokens = ([("test", 1); ("test2", 1)] |> Map.ofList) }) "should"
                     testCase "test train function (two training, two category)" <| fun _ ->
-                        let struct (subject, _) = Naive.init<int>(None)
-                                                    |> Trainer.train({ value = "test"; category = 2; weight = None })
-                                                    |> Trainer.train({ value = "test2"; category = 1; weight = None })
+                        let struct (subject, _) = Trainer.init<int>(None)
+                                                    |> Naive.train({ value = "test"; category = 2; weight = None })
+                                                    |> Naive.train({ value = "test2"; category = 1; weight = None })
                         Expect.isSome subject "should be some"
 
                         Expect.equal (subject.Value.trainings) (2) "trainings quantity should equal 2"
