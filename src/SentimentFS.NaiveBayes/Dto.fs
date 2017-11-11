@@ -2,6 +2,7 @@ namespace SentimentFS.NaiveBayes.Dto
 
 type ProbabilityModel =
     | Naive
+    | Multinominal
 
 type ClassificationScore<'a when 'a : comparison>  = { score: Map<'a, float> }
 

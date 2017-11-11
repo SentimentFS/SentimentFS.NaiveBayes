@@ -32,6 +32,23 @@ module Naive =
         let newState = (config, state) |> categorize(query, parsedTokens) |> State.incrementTrainings
         struct (Some newState, config)
 
+module Multinominal =
+
+    let parseTokens(config: Config)(word: string) =
+        let result = word
+                        |> Tokenizer.tokenize
+                        |> List.filterOut(config.stopWords)
+                        |> List.map(config.stem)
+        result
+
+    let train(query: TrainingQuery<_>) struct (stateOpt: State<_> option, config: Config) =
+        let state =
+           match stateOpt with
+           | Some oldState -> oldState
+           | None -> State.empty()
+        let parsedTokens = query.value |> parseTokens(config)
+        struct (Some state, config)
+
 module Trainer =
     let init<'a when 'a : comparison>(config: Config option): struct (State<'a> option * Config) =
         struct (None, match config with Some c -> c | None -> Config.Default())
@@ -39,5 +56,6 @@ module Trainer =
     let train(query: TrainingQuery<_>) struct (stateOpt: State<_> option, config: Config) =
         match config.model with
         | Naive -> Naive.train query struct (stateOpt, config)
+        | Multinominal -> Naive.train query struct (stateOpt, config)
 
 

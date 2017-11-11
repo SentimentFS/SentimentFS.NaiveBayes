@@ -79,4 +79,9 @@ module Trainer =
                         Expect.equal (categoryOpt2.Value) ({ trainings = 1; tokens = ([("test2", 1)] |> Map.ofList) }) "should"
                 ]
             ]
+            testList "Multinominal" [
+                test "Ok" {
+                    Expect.isOk (Ok(2)) "should be ok"
+                }
+            ]
         ]
