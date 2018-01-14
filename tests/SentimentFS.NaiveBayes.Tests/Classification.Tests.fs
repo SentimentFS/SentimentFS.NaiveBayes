@@ -15,6 +15,33 @@ type Fruit =
     | Banana
 
 module Classifier =
+    [<Tests>]
+    let probabilityCountTests =
+        testList "Probabilities" [
+            testList "Naive P(A|Bi) = TTP(Bi|A) * P(A)" [
+                testList "P(A)" [
+                    test "apriori" {
+                        let struct (state, _ ) = Trainer.init<Emotion>(None)
+                                                    |> Trainer.train({ value = "positiveText"; category = Positive; weight = None })
+                                                    |> Trainer.train({ value = "negativeText"; category = Negative; weight = None })
+                        let subject = state.Value |> NaiveProbability.apriori
+                        Expect.equal subject.[Emotion.Negative] 0.5 "negative emotion probability should equal 0.5"
+                        Expect.equal subject.[Emotion.Positive] 0.5 "positive emotion probability should equal 0.5"
+                    }
+                    test "apriori2" {
+                        let struct (state, _ ) = Trainer.init<Emotion>(None)
+                                                    |> Trainer.train({ value = "positiveText"; category = Positive; weight = None })
+                                                    |> Trainer.train({ value = "negativeText"; category = Negative; weight = None })
+                                                    |> Trainer.train({ value = "negativeText"; category = Negative; weight = None })
+                                                    |> Trainer.train({ value = "negativeText"; category = Negative; weight = None })
+                        let subject = state.Value |> NaiveProbability.apriori
+                        Expect.equal subject.[Emotion.Negative] 0.75 "negative emotion probability should equal 0.75"
+                        Expect.equal subject.[Emotion.Positive] 0.25 "positive emotion probability should equal 0.25"
+                    }
+                ]
+            ]
+        ]
+
 
     [<Tests>]
     let tests =

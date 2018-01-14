@@ -2,11 +2,12 @@ namespace SentimentFS.NaiveBayes.Classification
 
 module NaiveProbability =
     open SentimentFS.NaiveBayes.Dto
-    let internal apriori (state: State<_>) =
+    let apriori (state: State<_>) =
         let l = state.categories |> Map.toList
         let allTokensQuantity = l |> List.sumBy (fun (_,v) -> ( v.tokens |> Map.toList |> List.sumBy (fun (_, v1) -> v1 |> float)))
         l |> List.map(fun (k,v) -> (k, ((v.tokens |> Map.toList |> List.sumBy (fun (_, v1) -> v1)) |> float) / allTokensQuantity)) |> Map.ofList
-    let internal aposterori (element: _) (category: _) (state: State<_>) =
+
+    let aposterori (element: _) (category: _) (state: State<_>) =
         match state.categories.TryFind(category) with
         | Some cat ->
             match cat.tokens.TryFind(element) with
