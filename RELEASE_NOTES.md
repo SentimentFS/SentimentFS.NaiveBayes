@@ -1,3 +1,7 @@
+#### 2.0.0 - 15.01.2018
+* new classifier state
+* fixed naive probability
+
 #### 1.3.0 - 08.11.2017
 * netstandard2.0
 
