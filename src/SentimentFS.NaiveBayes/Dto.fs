@@ -10,15 +10,15 @@ type TrainingQuery<'a when 'a : comparison> = { value: string; category: 'a; wei
 
 type Category = { trainings: int; tokens: Map<string, int> }
 
-type State<'a when 'a : comparison> = { categories: Map<'a, Category>; trainings: int }
+type ClassifierState<'a when 'a : comparison> = { categories: Map<'a, Category>; trainings: int }
 
 type Config = { model : ProbabilityModel; defaultWeight: int; stem: string -> string; stopWords: string list }
     with static member Default() = { stem = id; stopWords = []; model = Naive; defaultWeight = 1 }
 
-module State =
+module ClassifierState =
 
     [<CompiledName("Empty")>]
     let empty() = { categories = Map.empty<'a, Category>; trainings = 0 }
 
-    let incrementTrainings(state: State<_>) =
-        { state with trainings = state.trainings + 1}
+    let incrementTrainings(state: ClassifierState<_>) =
+        { state with trainings = state.trainings + 1 }

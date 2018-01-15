@@ -11,7 +11,7 @@ module Naive =
                         |> List.map(config.stem)
         result
 
-    let categorize(query: TrainingQuery<_>, tokens: string list)(config: Config, state: State<_>) =
+    let categorize(query: TrainingQuery<_>, tokens: string list)(config: Config, state: ClassifierState<_>) =
         let accumulate = fun oldTokens -> tokens
                                             |> Map.mapValues(match query.weight with Some x -> x | None ->config.defaultWeight)
                                             |> Map.merge (fun (_, v1, v2) -> v1 + v2 ) oldTokens
@@ -23,13 +23,13 @@ module Naive =
                 { trainings = 1; tokens = Map.empty<string, int> |> accumulate }
         { state with categories = (state.categories.Add(query.category, newCategory)) }
 
-    let train(query: TrainingQuery<_>) struct (stateOpt: State<_> option, config: Config) =
+    let train(query: TrainingQuery<_>) struct (stateOpt: ClassifierState<_> option, config: Config) =
         let state =
            match stateOpt with
            | Some oldState -> oldState
-           | None -> State.empty()
+           | None -> ClassifierState.empty()
         let parsedTokens = (query.value) |> parseTokens(config)
-        let newState = (config, state) |> categorize(query, parsedTokens) |> State.incrementTrainings
+        let newState = (config, state) |> categorize(query, parsedTokens) |> ClassifierState.incrementTrainings
         struct (Some newState, config)
 
 module Multinominal =
@@ -41,19 +41,19 @@ module Multinominal =
                         |> List.map(config.stem)
         result
 
-    let train(query: TrainingQuery<_>) struct (stateOpt: State<_> option, config: Config) =
+    let train(query: TrainingQuery<_>) struct (stateOpt: ClassifierState<_> option, config: Config) =
         let state =
            match stateOpt with
            | Some oldState -> oldState
-           | None -> State.empty()
+           | None -> ClassifierState.empty()
         let parsedTokens = query.value |> parseTokens(config)
         struct (Some state, config)
 
 module Trainer =
-    let init<'a when 'a : comparison>(config: Config option): struct (State<'a> option * Config) =
+    let init<'a when 'a : comparison>(config: Config option): struct (ClassifierState<'a> option * Config) =
         struct (None, match config with Some c -> c | None -> Config.Default())
 
-    let train(query: TrainingQuery<_>) struct (stateOpt: State<_> option, config: Config) =
+    let train(query: TrainingQuery<_>) struct (stateOpt: ClassifierState<_> option, config: Config) =
         match config.model with
         | Naive -> Naive.train query struct (stateOpt, config)
         | Multinominal -> Naive.train query struct (stateOpt, config)

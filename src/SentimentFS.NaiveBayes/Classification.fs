@@ -2,12 +2,12 @@ namespace SentimentFS.NaiveBayes.Classification
 
 module NaiveProbability =
     open SentimentFS.NaiveBayes.Dto
-    let apriori (state: State<_>) =
+    let apriori (state: ClassifierState<_>) =
         let l = state.categories |> Map.toList
         let allTokensQuantity = l |> List.sumBy (fun (_,v) -> ( v.tokens |> Map.toList |> List.sumBy (fun (_, v1) -> v1 |> float)))
         l |> List.map(fun (k,v) -> (k, ((v.tokens |> Map.toList |> List.sumBy (fun (_, v1) -> v1)) |> float) / allTokensQuantity)) |> Map.ofList
 
-    let aposterori (element: _) (category: _) (state: State<_>) =
+    let aposterori (element: _) (category: _) (state: ClassifierState<_>) =
         match state.categories.TryFind(category) with
         | Some cat ->
             match cat.tokens.TryFind(element) with
@@ -17,7 +17,7 @@ module NaiveProbability =
             | None -> 1.0
         | None -> 1.0
 
-    let compute (elements: _ list) (state: State<_>) =
+    let compute (elements: _ list) (state: ClassifierState<_>) =
         let func cat = (elements |> List.map(fun x -> (aposterori x cat state)) |> List.fold(( * )) 1.0)
         let aprioriP = state |> apriori
         state.categories
@@ -38,7 +38,7 @@ module Classifier =
                         |> List.map(config.stem)
         result
 
-    let classify(element: _) struct (stateOpt: State<_> option, config: Config)  =
+    let classify(element: _) struct (stateOpt: ClassifierState<_> option, config: Config)  =
         let tokens = element |> parseTokens(config)
         match config.model with
         | _ ->

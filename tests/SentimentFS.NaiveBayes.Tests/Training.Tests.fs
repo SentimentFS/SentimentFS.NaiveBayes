@@ -22,13 +22,13 @@ module Trainer =
                 ]
                 testList "incrementTrainings" [
                     test "increment training" {
-                        let subject = State.empty() |> State.incrementTrainings
+                        let subject = ClassifierState.empty() |> ClassifierState.incrementTrainings
                         Expect.equal (subject.trainings) 1 "should equal 1"
                     }
                 ]
                 testList "categorize" [
                    testCase "when category no exist in state" <| fun _ ->
-                       let subject = (Config.Default(), State.empty()) |> Naive.categorize({ value = ""; category = 2; weight = None }, ["cute"; "dog"])
+                       let subject = (Config.Default(), ClassifierState.empty()) |> Naive.categorize({ value = ""; category = 2; weight = None }, ["cute"; "dog"])
                        Expect.isTrue (subject.categories.ContainsKey(2)) "should contain 2"
                        Expect.equal ((subject.categories.[2]).trainings) 1 "trainings should equal 1"
                        Expect.equal ((subject.categories.[2]).tokens) ([("cute", 1); ("dog", 1)] |> Map.ofList) "trainings should equal 1"
