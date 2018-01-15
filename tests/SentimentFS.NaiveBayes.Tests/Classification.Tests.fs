@@ -21,20 +21,20 @@ module Classifier =
             testList "Naive P(A|Bi) = TTP(Bi|A) * P(A)" [
                 testList "P(A)" [
                     test "apriori" {
-                        let struct (state, _ ) = Trainer.init<Emotion>(None)
+                        let state =  ClassifierState.empty(None)
                                                     |> Trainer.train({ value = "positiveText"; category = Positive; weight = None })
                                                     |> Trainer.train({ value = "negativeText"; category = Negative; weight = None })
-                        let subject = state.Value |> NaiveProbability.apriori
+                        let subject = state |> NaiveProbability.apriori
                         Expect.equal subject.[Emotion.Negative] 0.5 "negative emotion probability should equal 0.5"
                         Expect.equal subject.[Emotion.Positive] 0.5 "positive emotion probability should equal 0.5"
                     }
                     test "apriori2" {
-                        let struct (state, _ ) = Trainer.init<Emotion>(None)
+                        let state =  ClassifierState.empty(None)
                                                     |> Trainer.train({ value = "positiveText"; category = Positive; weight = None })
                                                     |> Trainer.train({ value = "negativeText"; category = Negative; weight = None })
                                                     |> Trainer.train({ value = "negativeText"; category = Negative; weight = None })
                                                     |> Trainer.train({ value = "negativeText"; category = Negative; weight = None })
-                        let subject = state.Value |> NaiveProbability.apriori
+                        let subject = state |> NaiveProbability.apriori
                         Expect.equal subject.[Emotion.Negative] 0.75 "negative emotion probability should equal 0.75"
                         Expect.equal subject.[Emotion.Positive] 0.25 "positive emotion probability should equal 0.25"
                     }
@@ -50,7 +50,7 @@ module Classifier =
                 testCase "test when text is negative" <| fun _ ->
                     let positiveText = "I love fsharp"
                     let negativeText = "I hate java"
-                    let subject = Trainer.init<Emotion>(None)
+                    let subject =  ClassifierState.empty(None)
                                     |> Trainer.train({ value = positiveText; category = Positive; weight = None })
                                     |> Trainer.train({ value = negativeText; category = Negative; weight = None })
                                     |> Classifier.classify("My brother hate java")
@@ -59,14 +59,14 @@ module Classifier =
                 testCase "test when text is positive" <| fun _ ->
                     let positiveText = "I love fsharp"
                     let negativeText = "I hate java"
-                    let subject = Trainer.init<Emotion>(None)
+                    let subject =  ClassifierState.empty(None)
                                     |> Trainer.train({ value = positiveText; category = Positive; weight = None })
                                     |> Trainer.train({ value = negativeText; category = Negative; weight = None })
                                     |> Classifier.classify("My brother love fsharp")
 
                     Expect.isGreaterThan (subject.score.TryFind(Positive).Value) (subject.score.TryFind(Negative).Value) "negative score should be greater than positive"
                 test "Fruit classification" {
-                    let subject = Trainer.init<Fruit>(None)
+                    let subject =  ClassifierState.empty(None)
                                     |> Trainer.train({ value = "red sweet"; category = Apple; weight = Some 2 })
                                     |> Trainer.train({ value = "green"; category = Apple; weight = None })
                                     |> Trainer.train({ value = "round"; category = Apple; weight = Some 4 })
