@@ -3,7 +3,7 @@ namespace SentimentFS.NaiveBayes.Tests
 open Expecto
 open SentimentFS.NaiveBayes.Training
 open SentimentFS.NaiveBayes.Dto
-
+open Swensen.Unquote
 module Trainer =
 
     [<Tests>]
@@ -16,10 +16,9 @@ module Trainer =
                       Expect.equal (tokens) (["cute"; "dog"]) "tokens should has two keys"
                 ]
                 testList "incrementTrainings" [
-                    test "increment training" {
+                    testCase "increment training" <| fun _ ->
                         let subject = ClassifierState.empty(None) |> ClassifierState.incrementTrainings
-                        Expect.equal (subject.trainings) 1 "should equal 1"
-                    }
+                        test <@ subject.trainings = 1 @>
                 ]
                 testList "categorize" [
                    testCase "when category no exist in state" <| fun _ ->
@@ -67,8 +66,7 @@ module Trainer =
                 ]
             ]
             testList "Multinominal" [
-                test "Ok" {
+                testCase "Ok" <| fun _ ->
                     Expect.isOk (Ok(2)) "should be ok"
-                }
             ]
         ]
