@@ -37,7 +37,7 @@ module Trainer =
                 ]
                 testList "train" [
                     testCase "test train function (one training)" <| fun _ ->
-                        let subject = ClassifierState.empty(None)
+                        let subject = ClassifierState.empty(None) |> Naive.train({ value = "test"; category = 2; weight = None })
                         Expect.equal (subject.trainings) (1) "trainings quantity should equal 1"
                         let categoryOpt = subject.categories.TryFind(2)
                         Expect.isSome categoryOpt "category of 2 should be some"
