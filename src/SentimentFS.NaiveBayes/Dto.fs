@@ -20,5 +20,6 @@ module ClassifierState =
     [<CompiledName("Empty")>]
     let empty() = { categories = Map.empty<'a, Category>; trainings = 0 }
 
+    [<CompiledName("IncrementTrainings")>]
     let incrementTrainings(state: ClassifierState<_>) =
         { state with trainings = state.trainings + 1 }
