@@ -2,7 +2,7 @@ namespace SentimentFS.NaiveBayes.Tests
 
 open Expecto
 open SentimentFS.NaiveBayes.Dto
-open Expecto.Flip
+open Swensen.Unquote
 
 module State =
 
@@ -12,13 +12,14 @@ module State =
             testList "empty" [
                 testCase "test get empty state function" <| fun _ ->
                     let subject: ClassifierState<int>  = ClassifierState.empty(None)
-                    Expect.equal "" subject.categories (Map.empty<int, Category>)
-                    Expect.equal "" subject ({ categories = Map.empty<int, Category>; trainings = 0; config = Config.empty() })
+                    test <@  subject.trainings = 0 @>
             ]
 
             testList "incrementTrainings" [
                 testCase "test incrementTrainings in empty state function" <| fun _ ->
-                    let subject: ClassifierState<int>  = ClassifierState.empty(None) |> ClassifierState.incrementTrainings
-                    Expect.equal subject ({ categories = Map.empty<int, Category>; trainings = 1; config = Config.empty() }) "should equal"
+                    let subjectBefore: ClassifierState<int>  = ClassifierState.empty(None)
+                    test <@  subjectBefore.trainings = 0 @>
+                    let subjectAfter = subjectBefore |> ClassifierState.incrementTrainings
+                    test <@  subjectAfter.trainings = 1 @>
             ]
         ]
