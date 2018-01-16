@@ -18,14 +18,6 @@ module NaiveProbability =
                                 let allTokensQuantity = state.categories |> Map.map(fun _ v -> v.tokens |> Map.fold(fun acc _ v1 -> acc + (v1 |> float)) 0.0) |> Map.fold(fun acc _ v -> acc + v) 0.0
                                 ((tokenQuantity |> float) / allTokensQuantity) / catProb.Value
                             )
-        // match state.categories.TryFind(category) with
-        // | Some cat ->
-        //     match cat.tokens.TryFind(element) with
-        //     | Some v ->
-        //         let allQ = cat.tokens |> Map.toList |> List.sumBy (fun (_,v) -> v) |> float
-        //         (v |> float) / allQ
-        //     | None -> 1.0
-        // | None -> 1.0
 
     let compute (elements: _ list) (state: ClassifierState<_>) =
         // let func cat = (elements |> List.map(fun x -> (aposterori x cat state)) |> List.fold(( * )) 1.0)
