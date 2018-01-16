@@ -29,9 +29,6 @@ module Category =
     let incrementTrainings(category: Category) =
         { category with trainings = category.trainings + 1 }
 
-    let addTokens (tokens: string list) =  2
-
-
 
 module ClassifierState =
 
