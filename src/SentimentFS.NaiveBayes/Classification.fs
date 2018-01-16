@@ -21,13 +21,15 @@ module NaiveProbability =
 
     let probabilityByCategory (elements: _ list) (category: _) (state: ClassifierState<_>) =
         categoryProbability state category
-            |> Option.bind(fun prob ->
-                               let probs = elements |> List.map(fun element -> wordWhenCategory element category state)
-                               Some 2
+            |> Option.map(fun categoryProb ->
+                               let elementsProbs = elements
+                                                    |> List.map ((fun element -> wordWhenCategory element category state) >> (fun opt -> defaultArg opt 1.0))
+                                                    |> List.fold(( * )) 1.0
+                               elementsProbs * categoryProb
                             )
 
     let compute (elements: _ list) (state: ClassifierState<_>) =
-        let a = state.categories |> Map.map(fun emotion category -> 2)
+        let a = state.categories |> Map.map(fun emotion _ -> probabilityByCategory elements emotion state)
         Map.empty<_, float>
 
 
