@@ -25,18 +25,22 @@ module Classifier =
                         let state =  ClassifierState.empty(None)
                                                     |> Trainer.train({ value = "positiveText"; category = Positive; weight = None })
                                                     |> Trainer.train({ value = "negativeText"; category = Negative; weight = None })
-                        let subject = state |> NaiveProbability.apriori
-                        test <@ subject.[Emotion.Negative] = 0.5 @>
-                        test <@ subject.[Emotion.Positive] = 0.5 @>
+                        let func = NaiveProbability.categoryProbability(state)
+                        let subjectPositive = func(Positive)
+                        test <@ subjectPositive = Some(0.5) @>
+                        let subjectNegaive = func(Negative)
+                        test <@ subjectNegaive = Some(0.5) @>
                     testCase "apriori2" <| fun _ ->
                         let state =  ClassifierState.empty(None)
                                                     |> Trainer.train({ value = "positiveText"; category = Positive; weight = None })
                                                     |> Trainer.train({ value = "negativeText"; category = Negative; weight = None })
                                                     |> Trainer.train({ value = "negativeText"; category = Negative; weight = None })
                                                     |> Trainer.train({ value = "negativeText"; category = Negative; weight = None })
-                        let subject = state |> NaiveProbability.apriori
-                        test <@ subject.[Emotion.Negative] = 0.75 @>
-                        test <@ subject.[Emotion.Positive] = 0.25 @>
+                        let func = NaiveProbability.categoryProbability(state)
+                        let subjectPositive = func(Positive)
+                        test <@ subjectPositive = Some(0.25) @>
+                        let subjectNegaive = func(Negative)
+                        test <@ subjectNegaive = Some(0.75) @>
                 ]
             ]
         ]
