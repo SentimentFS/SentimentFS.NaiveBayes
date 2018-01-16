@@ -19,13 +19,15 @@ module NaiveProbability =
                                 ((tokenQuantity |> float) / allTokensQuantity) / catProb.Value
                             )
 
+    let probabilityByCategory (elements: _ list) (category: _) (state: ClassifierState<_>) =
+        categoryProbability state category
+            |> Option.bind(fun prob ->
+                               let probs = elements |> List.map(fun element -> wordWhenCategory element category state)
+                               Some 2
+                            )
+
     let compute (elements: _ list) (state: ClassifierState<_>) =
-        // let func cat = (elements |> List.map(fun x -> (aposterori x cat state)) |> List.fold(( * )) 1.0)
-        // let aprioriP = state |> categoryProbabity
-        // state.categories
-        //         |> Map.toList
-        //         |> List.map(fun (k, _) -> (k, (match (func k) with | prob when prob = 1.0 -> 0.0 | prob -> prob * match aprioriP.TryFind(k) with Some vl -> vl | None -> 1.0)))
-        //         |> Map.ofList
+        let a = state.categories |> Map.map(fun emotion category -> 2)
         Map.empty<_, float>
 
 
