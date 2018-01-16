@@ -29,8 +29,9 @@ module NaiveProbability =
                             )
 
     let compute (elements: _ list) (state: ClassifierState<_>) =
-        let a = state.categories |> Map.map(fun emotion _ -> probabilityByCategory elements emotion state)
-        Map.empty<_, float>
+        state.categories
+                    |> Map.map((fun emotion _ -> probabilityByCategory elements emotion state))
+                    |> Map.map(fun _ v -> defaultArg v 0.0)
 
 
 module Classifier =
