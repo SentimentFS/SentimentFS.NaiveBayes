@@ -23,7 +23,9 @@ module NaiveProbability =
         categoryProbability state category
             |> Option.map(fun categoryProb ->
                                let elementsProbs = elements
-                                                    |> List.map ((fun element -> wordWhenCategory element category state) >> (fun opt -> defaultArg opt 1.0))
+                                                    |> List.map (fun element -> wordWhenCategory element category state)
+                                                    |> List.filter(fun x -> x.IsSome)
+                                                    |> List.map(fun x -> x.Value)
                                                     |> List.fold(( * )) 1.0
                                elementsProbs * categoryProb
                             )
