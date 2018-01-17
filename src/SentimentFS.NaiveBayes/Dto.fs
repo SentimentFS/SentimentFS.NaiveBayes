@@ -11,7 +11,7 @@ type TrainingQuery<'a when 'a : comparison> = { value: string; category: 'a; wei
 
 type Category = { trainings: int; tokens: Map<string, int> }
 
-type Config = { model : ProbabilityModel; defaultWeight: int; stem: string -> string; stopWords: string list }
+type Config = { defaultWeight: int; stem: string -> string; stopWords: string list }
 
 type ClassifierState<'a when 'a : comparison> = { categories: Map<'a, Category>; trainings: int; config: Config }
 
@@ -19,7 +19,7 @@ type ClassifierState<'a when 'a : comparison> = { categories: Map<'a, Category>;
 module Config =
 
     [<CompiledName("Empty")>]
-    let empty() = { stem = id; stopWords = []; model = Multinominal; defaultWeight = 1 }
+    let empty() = { stem = id; stopWords = []; defaultWeight = 1 }
 
 module Category =
 

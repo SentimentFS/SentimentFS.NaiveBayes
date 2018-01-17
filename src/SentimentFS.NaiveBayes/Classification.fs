@@ -17,8 +17,8 @@ module Classifier =
                         |> List.map(config.stem)
         result
 
-    let classify(element: _) (state: ClassifierState<_>)  =
+    let classify (element: _) (model: ProbabilityModel) (state: ClassifierState<_>)  =
         let tokens = element |> parseTokens(state.config)
-        match state.config.model with
+        match model with
         | _ ->
             { score = Map.empty<_, float> }
