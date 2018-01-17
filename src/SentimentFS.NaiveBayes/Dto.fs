@@ -1,8 +1,9 @@
 namespace SentimentFS.NaiveBayes.Dto
 
 type ProbabilityModel =
-    | Naive
     | Multinominal
+    | BinarizedMultinomial
+    | Bernulli
 
 type ClassificationScore<'a when 'a : comparison>  = { score: Map<'a, float> }
 
@@ -18,7 +19,7 @@ type ClassifierState<'a when 'a : comparison> = { categories: Map<'a, Category>;
 module Config =
 
     [<CompiledName("Empty")>]
-    let empty() = { stem = id; stopWords = []; model = Naive; defaultWeight = 1 }
+    let empty() = { stem = id; stopWords = []; model = Multinominal; defaultWeight = 1 }
 
 module Category =
 

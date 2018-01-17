@@ -16,72 +16,11 @@ type Fruit =
     | Banana
 
 module Classifier =
-    [<Tests>]
-    let probabilityCountTests =
-        testList "Probabilities" [
-            testList "Naive P(A|Bi) = TTP(Bi|A) * P(A)" [
-                testList "P(A)" [
-                    testCase "apriori" <| fun _ ->
-                        let state =  ClassifierState.empty(None)
-                                                    |> Trainer.train({ value = "positiveText"; category = Positive; weight = None })
-                                                    |> Trainer.train({ value = "negativeText"; category = Negative; weight = None })
-                        let func = NaiveProbability.categoryProbability(state)
-                        let subjectPositive = func(Positive)
-                        test <@ subjectPositive = Some(0.5) @>
-                        let subjectNegaive = func(Negative)
-                        test <@ subjectNegaive = Some(0.5) @>
-                    testCase "apriori2" <| fun _ ->
-                        let state =  ClassifierState.empty(None)
-                                                    |> Trainer.train({ value = "positiveText"; category = Positive; weight = None })
-                                                    |> Trainer.train({ value = "negativeText"; category = Negative; weight = None })
-                                                    |> Trainer.train({ value = "negativeText"; category = Negative; weight = None })
-                                                    |> Trainer.train({ value = "negativeText"; category = Negative; weight = None })
-                        let func = NaiveProbability.categoryProbability(state)
-                        let subjectPositive = func(Positive)
-                        test <@ subjectPositive = Some(0.25) @>
-                        let subjectNegaive = func(Negative)
-                        test <@ subjectNegaive = Some(0.75) @>
-                ]
-                testList "P(Bi|A)" [
-                    testCase "probability when category and text exists and has one element" <| fun _ ->
-                        let state =  ClassifierState.empty(None)
-                                                    |> Trainer.train({ value = "test"; category = Positive; weight = None })
-                                                    |> Trainer.train({ value = "test"; category = Negative; weight = None })
-                        let subjectPositive = NaiveProbability.wordWhenCategory ("test") (Positive) (state)
-                        test <@ subjectPositive = Some(1.0) @>
-                        let subjectNegaive = NaiveProbability.wordWhenCategory ("test") (Negative) (state)
-                        test <@ subjectNegaive = Some(1.0) @>
-                    testCase "probability when category and text exists and has two element" <| fun _ ->
-                        let state =  ClassifierState.empty(None)
-                                                    |> Trainer.train({ value = "test"; category = Positive; weight = Some(2) })
-                                                    |> Trainer.train({ value = "test2"; category = Positive; weight = Some(2) })
-                                                    |> Trainer.train({ value = "test"; category = Negative; weight = Some(2) })
-                                                    |> Trainer.train({ value = "test2"; category = Negative; weight = Some(2) })
-                        let subjectPositive = NaiveProbability.wordWhenCategory ("test") (Positive) (state)
-                        test <@ subjectPositive = Some(0.5) @>
-                        let subjectNegaive = NaiveProbability.wordWhenCategory ("test") (Negative) (state)
-                        test <@ subjectNegaive = Some(0.5) @>
-                    testCase "probability when category non exists in map" <| fun _ ->
-                        let state =  ClassifierState.empty(None)
-                                                    |> Trainer.train({ value = "test"; category = Positive; weight = Some(2) })
-                                                    |> Trainer.train({ value = "test2"; category = Positive; weight = Some(2) })
-                        let subject= NaiveProbability.wordWhenCategory ("test") (Negative) (state)
-                        test <@ subject = None @>
-                    testCase "probability when token non exists in map" <| fun _ ->
-                        let state =  ClassifierState.empty(None)
-                                                    |> Trainer.train({ value = "test"; category = Positive; weight = Some(2) })
-                                                    |> Trainer.train({ value = "test2"; category = Positive; weight = Some(2) })
-                        let subject= NaiveProbability.wordWhenCategory ("nonexistenttoken") (Positive) (state)
-                        test <@ subject = None @>
-                ]
-            ]
-        ]
-
 
     [<Tests>]
     let tests =
         testList "Classifier" [
-            testList "Naive" [
+            testList "Multinominal" [
                 testCase "test when text is negative" <| fun _ ->
                     let positiveText = "I love fsharp"
                     let negativeText = "I hate java"
