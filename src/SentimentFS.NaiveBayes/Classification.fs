@@ -3,7 +3,12 @@ namespace SentimentFS.NaiveBayes.Classification
 module Multinominal =
     open SentimentFS.NaiveBayes.Dto
 
-    let a = 2
+    let categoryProbability (state: ClassifierState<_>) =
+        let tokensQuantityByCategory = state.categories |> Map.map(fun _ v -> v.tokens |> Map.fold(fun acc _ v1 -> acc + (v1 |> float)) 0.0)
+        let allTokensQuantity = tokensQuantityByCategory |> Map.fold(fun acc _ v -> acc + v) 0.0
+        fun (category: _) ->
+            tokensQuantityByCategory.TryFind(category)
+            |> Option.bind(fun value -> Some(value / allTokensQuantity))
 
 module Classifier =
     open SentimentFS.NaiveBayes.Dto

@@ -5,6 +5,7 @@ open SentimentFS.NaiveBayes.Dto
 open SentimentFS.NaiveBayes.Training
 open SentimentFS.NaiveBayes.Classification
 open Swensen.Unquote
+open System.Linq.Expressions
 
 type Emotion =
     | Negative
@@ -15,43 +16,27 @@ type Fruit =
     | Orange
     | Banana
 
+type Country =
+    | Yes
+    | No
+
 module Classifier =
 
     [<Tests>]
     let tests =
         testList "Classifier" [
             testList "Multinominal" [
-                testCase "test when text is negative" <| fun _ ->
-                    let positiveText = "I love fsharp"
-                    let negativeText = "I hate java"
-                    let subject =  ClassifierState.empty(None)
-                                    |> Trainer.train({ value = positiveText; category = Positive; weight = None })
-                                    |> Trainer.train({ value = negativeText; category = Negative; weight = None })
-                                    |> Classifier.classify("My brother hate java")(Multinominal)
+                testCase "get category Probability" <| fun _ ->
+                    let subject = ClassifierState.empty(None)
+                                    |> Trainer.train({ value = "Chinese Beijing Chinese"; category = Yes; weight = None })
+                                    |> Trainer.train({ value = "Chinese Chinese Shanghai"; category = Yes; weight = None })
+                                    |> Trainer.train({ value = "Chinese Macao"; category = Yes; weight = None })
+                                    |> Trainer.train({ value = "Tokyo Japan Chinese"; category = No; weight = None })
+                                    |> Multinominal.categoryProbability
 
-                    test <@ subject.score.TryFind(Negative).Value > subject.score.TryFind(Positive).Value @>
-                testCase "test when text is positive" <| fun _ ->
-                    let positiveText = "I love fsharp"
-                    let negativeText = "I hate java"
-                    let subject =  ClassifierState.empty(None)
-                                    |> Trainer.train({ value = positiveText; category = Positive; weight = None })
-                                    |> Trainer.train({ value = negativeText; category = Negative; weight = None })
-                                    |> Classifier.classify("My brother love fsharp")(Multinominal)
-
-                    test <@ subject.score.TryFind(Positive).Value > subject.score.TryFind(Negative).Value @>
-                testCase "Fruit classification" <| fun _ ->
-                    let subject =  ClassifierState.empty(None)
-                                    |> Trainer.train({ value = "red sweet"; category = Apple; weight = Some 2 })
-                                    |> Trainer.train({ value = "green"; category = Apple; weight = None })
-                                    |> Trainer.train({ value = "round"; category = Apple; weight = Some 4 })
-                                    |> Trainer.train({ value = "sweet"; category = Banana; weight = Some 2 })
-                                    |> Trainer.train({ value = "green"; category = Banana; weight = None })
-                                    |> Trainer.train({ value = "yellow long"; category = Banana; weight = Some 4 })
-                                    |> Trainer.train({ value = "red"; category = Orange; weight = Some 2 })
-                                    |> Trainer.train({ value = "yellow sweet"; category = Orange; weight = None })
-                                    |> Trainer.train({ value = "round"; category = Orange; weight = Some 4 })
-                                    |> Classifier.classify("Maybe green maybe red but definitely round and sweet.")(Multinominal)
-
-                    Expect.isOk (Ok(2)) "should be ok"
+                    test <@ (subject(Yes)).Value >= 0.72 @>
+                    test <@ (subject(Yes)).Value <= 0.73 @>
+                    test <@ (subject(No)).Value >= 0.27 @>
+                    test <@ (subject(No)).Value <= 0.28 @>
             ]
         ]
