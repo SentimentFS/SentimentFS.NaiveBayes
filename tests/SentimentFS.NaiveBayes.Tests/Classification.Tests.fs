@@ -27,7 +27,7 @@ module Classifier =
                     let subject =  ClassifierState.empty(None)
                                     |> Trainer.train({ value = positiveText; category = Positive; weight = None })
                                     |> Trainer.train({ value = negativeText; category = Negative; weight = None })
-                                    |> Classifier.classify("My brother hate java")
+                                    |> Classifier.classify("My brother hate java")(Multinominal)
 
                     test <@ subject.score.TryFind(Negative).Value > subject.score.TryFind(Positive).Value @>
                 testCase "test when text is positive" <| fun _ ->
@@ -36,7 +36,7 @@ module Classifier =
                     let subject =  ClassifierState.empty(None)
                                     |> Trainer.train({ value = positiveText; category = Positive; weight = None })
                                     |> Trainer.train({ value = negativeText; category = Negative; weight = None })
-                                    |> Classifier.classify("My brother love fsharp")
+                                    |> Classifier.classify("My brother love fsharp")(Multinominal)
 
                     test <@ subject.score.TryFind(Positive).Value > subject.score.TryFind(Negative).Value @>
                 testCase "Fruit classification" <| fun _ ->
@@ -50,7 +50,7 @@ module Classifier =
                                     |> Trainer.train({ value = "red"; category = Orange; weight = Some 2 })
                                     |> Trainer.train({ value = "yellow sweet"; category = Orange; weight = None })
                                     |> Trainer.train({ value = "round"; category = Orange; weight = Some 4 })
-                                    |> Classifier.classify("Maybe green maybe red but definitely round and sweet.")
+                                    |> Classifier.classify("Maybe green maybe red but definitely round and sweet.")(Multinominal)
 
                     Expect.isOk (Ok(2)) "should be ok"
             ]
