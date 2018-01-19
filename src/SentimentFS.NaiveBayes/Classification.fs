@@ -8,7 +8,19 @@ module Multinominal =
         let allTokensQuantity = tokensQuantityByCategory |> Map.fold(fun acc _ v -> acc + v) 0.0
         fun (category: _) ->
             tokensQuantityByCategory.TryFind(category)
-            |> Option.bind(fun value -> Some(value / allTokensQuantity))
+            |> Option.map(fun value -> value / allTokensQuantity)
+
+    let countP (element: _) (category :_) (state: ClassifierState<_>) =
+        let b = state.categories |> Map.map(fun _ v -> v.tokens.Count) |> Map.fold(fun acc _ v1 -> acc + (v1 |> float)) 0.0
+        state.categories.TryFind(category)
+            |> Option.map(fun cat ->
+                            let allTokensQuantity = cat.tokens |> Map.fold(fun acc _ v1 -> acc + (v1 |> float)) 0.0
+                            match cat.tokens.TryFind(element) with
+                            | Some x ->
+                                ((x |> float) + 1.0) / (allTokensQuantity + b)
+                            | None ->
+                                1.0 / (allTokensQuantity + b)
+                          )
 
 module Classifier =
     open SentimentFS.NaiveBayes.Dto
