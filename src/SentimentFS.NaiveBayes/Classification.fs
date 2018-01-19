@@ -16,11 +16,10 @@ module Classifier =
     open SentimentFS.Common
 
     let internal parseTokens(config: Config)(word: string) =
-        let result = word
-                        |> Tokenizer.tokenize
-                        |> List.filterOut(config.stopWords)
-                        |> List.map(config.stem)
-        result
+        word
+            |> Tokenizer.tokenize
+            |> List.filterOut(config.stopWords)
+            |> List.map(config.stem)
 
     let classify (element: _) (model: ProbabilityModel) (state: ClassifierState<_>)  =
         let tokens = element |> parseTokens(state.config)
