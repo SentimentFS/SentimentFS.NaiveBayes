@@ -88,6 +88,23 @@ module Classifier =
                                     |> Multinominal.compute ["chinese"; "chinese"; "chinese"; "tokyo"; "japan"] No
                     test <@ subject.Value <= 0.00015 @>
                     test <@ subject.Value >= 0.00010 @>
-                testCase "Classify" <| fun _ ->
+                testCase "classify when text is negative" <| fun _ ->
+                    let positiveText = "I love fsharp"
+                    let negativeText = "I hate java"
+                    let subject =  ClassifierState.empty(None)
+                                    |> Trainer.train({ value = positiveText; category = Positive; weight = None })
+                                    |> Trainer.train({ value = negativeText; category = Negative; weight = None })
+                                    |> Classifier.classify("My brother hate java")(Multinominal)
+
+                    test <@ subject.score.TryFind(Negative).Value > subject.score.TryFind(Positive).Value @>
+                testCase "classify when text is positive" <| fun _ ->
+                    let positiveText = "I love fsharp"
+                    let negativeText = "I hate java"
+                    let subject =  ClassifierState.empty(None)
+                                    |> Trainer.train({ value = positiveText; category = Positive; weight = None })
+                                    |> Trainer.train({ value = negativeText; category = Negative; weight = None })
+                                    |> Classifier.classify("My brother love fsharp")(Multinominal)
+
+                    test <@ subject.score.TryFind(Positive).Value > subject.score.TryFind(Negative).Value @>
             ]
         ]

@@ -44,4 +44,5 @@ module Classifier =
         let tokens = element |> parseTokens(state.config)
         match model with
         | _ ->
-            { score = Map.empty<_, float> }
+            let result = state.categories |> Map.map(fun k _ -> Multinominal.compute tokens k state) |> Map.map(fun _ v -> defaultArg v 0.0)
+            { score = result }
