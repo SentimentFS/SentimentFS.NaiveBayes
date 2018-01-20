@@ -38,5 +38,13 @@ module Classifier =
                     test <@ (subject(Yes)).Value <= 0.73 @>
                     test <@ (subject(No)).Value >= 0.27 @>
                     test <@ (subject(No)).Value <= 0.28 @>
+                testCase "P(Chinese|yes)" <| fun _ ->
+                    let subject = ClassifierState.empty(None)
+                                    |> Trainer.train({ value = "Chinese Beijing Chinese"; category = Yes; weight = None })
+                                    |> Trainer.train({ value = "Chinese Chinese Shanghai"; category = Yes; weight = None })
+                                    |> Trainer.train({ value = "Chinese Macao"; category = Yes; weight = None })
+                                    |> Trainer.train({ value = "Tokyo Japan Chinese"; category = No; weight = None })
+                                    |> Multinominal.countP "chinese" Yes
+                    test <@ (subject).Value = (3.0/7.0) @>
             ]
         ]

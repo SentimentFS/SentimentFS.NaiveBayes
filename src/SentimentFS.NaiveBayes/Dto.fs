@@ -13,7 +13,7 @@ type Category = { trainings: int; tokens: Map<string, int> }
 
 type Config = { defaultWeight: int; stem: string -> string; stopWords: string list }
 
-type ClassifierState<'a when 'a : comparison> = { categories: Map<'a, Category>; trainings: int; config: Config }
+type ClassifierState<'a when 'a : comparison> = { categories: Map<'a, Category>; trainings: int; tokens: Map<string, int>; config: Config }
 
 
 module Config =
@@ -37,9 +37,9 @@ module ClassifierState =
     let empty(config: Config option) =
         match config with
         | Some conf ->
-            { categories = Map.empty<'a, Category>; trainings = 0; config = conf }
+            { categories = Map.empty<'a, Category>; trainings = 0; tokens = Map.empty<string, int>; config = conf }
         | None ->
-            { categories = Map.empty<'a, Category>; trainings = 0; config = Config.empty() }
+            { categories = Map.empty<'a, Category>; trainings = 0; tokens = Map.empty<string, int>; config = Config.empty() }
 
     [<CompiledName("IncrementTrainings")>]
     let incrementTrainings(state: ClassifierState<_>) =

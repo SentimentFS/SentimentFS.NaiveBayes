@@ -6,11 +6,10 @@ open SentimentFS.Common
 module Trainer =
 
     let parseTokens(config: Config)(word: string) =
-        let result = word
-                        |> Tokenizer.tokenize
-                        |> List.filterOut(config.stopWords)
-                        |> List.map(config.stem)
-        result
+        word
+            |> Tokenizer.tokenize
+            |> List.filterOut(config.stopWords)
+            |> List.map(config.stem)
 
     let categorize(query: TrainingQuery<_>, tokens: string list)(state: ClassifierState<_>) =
         let accumulate = fun oldTokens -> tokens
@@ -24,9 +23,15 @@ module Trainer =
                 { trainings = 1; tokens = Map.empty<string, int> |> accumulate }
         { state with categories = (state.categories.Add(query.category, newCategory)) }
 
+    let addTokens(query: TrainingQuery<_>, tokens: string list)(state: ClassifierState<_>) =
+        let accumulate = fun oldTokens -> tokens
+                                            |> Map.mapValues(match query.weight with Some x -> x | None -> state.config.defaultWeight)
+                                            |> Map.merge (fun (_, v1, v2) -> v1 + v2 ) oldTokens
+        { state with tokens = (state.tokens |> accumulate) }
+
     let train(query: TrainingQuery<_>) (state: ClassifierState<_>) =
         let parsedTokens = (query.value) |> parseTokens(state.config)
-        let newState = state |> categorize(query, parsedTokens) |> ClassifierState.incrementTrainings
+        let newState = state |> categorize(query, parsedTokens) |> addTokens(query, parsedTokens) |> ClassifierState.incrementTrainings
         newState
 
 

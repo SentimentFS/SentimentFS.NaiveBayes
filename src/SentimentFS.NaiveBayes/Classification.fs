@@ -11,7 +11,7 @@ module Multinominal =
             |> Option.map(fun value -> value / allTokensQuantity)
 
     let countP (element: _) (category :_) (state: ClassifierState<_>) =
-        let b = state.categories |> Map.map(fun _ v -> v.tokens.Count) |> Map.fold(fun acc _ v1 -> acc + (v1 |> float)) 0.0
+        let b = state.tokens.Count |> float
         state.categories.TryFind(category)
             |> Option.map(fun cat ->
                             let allTokensQuantity = cat.tokens |> Map.fold(fun acc _ v1 -> acc + (v1 |> float)) 0.0
