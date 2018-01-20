@@ -1,6 +1,7 @@
 #### 1.4.0 - 20.01.2018
 * new classifier state
 * multinominal naive bayes
+* new config
 
 #### 1.3.0 - 08.11.2017
 * netstandard2.0
