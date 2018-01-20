@@ -21,6 +21,13 @@ module Multinominal =
                             | None ->
                                 1.0 / (allTokensQuantity + b)
                           )
+    let compute (tokens: _ list) (category: _) (state: ClassifierState<_>) =
+        categoryProbability state category
+            |> Option.map(fun catProb ->
+                    let prob = tokens |> List.map((fun t -> countP t category state) >> (fun opt -> defaultArg opt 0.0)) |> List.fold(( * )) 1.0
+                    prob * catProb
+                )
+
 
 module Classifier =
     open SentimentFS.NaiveBayes.Dto
