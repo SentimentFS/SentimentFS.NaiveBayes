@@ -5,6 +5,7 @@ open SentimentFS.NaiveBayes.Dto
 open SentimentFS.NaiveBayes.Training
 open SentimentFS.NaiveBayes.Classification
 open Swensen.Unquote
+open System.Linq.Expressions
 
 type Emotion =
     | Negative
@@ -15,104 +16,95 @@ type Fruit =
     | Orange
     | Banana
 
-module Classifier =
-    [<Tests>]
-    let probabilityCountTests =
-        testList "Probabilities" [
-            testList "Naive P(A|Bi) = TTP(Bi|A) * P(A)" [
-                testList "P(A)" [
-                    testCase "apriori" <| fun _ ->
-                        let state =  ClassifierState.empty(None)
-                                                    |> Trainer.train({ value = "positiveText"; category = Positive; weight = None })
-                                                    |> Trainer.train({ value = "negativeText"; category = Negative; weight = None })
-                        let func = NaiveProbability.categoryProbability(state)
-                        let subjectPositive = func(Positive)
-                        test <@ subjectPositive = Some(0.5) @>
-                        let subjectNegaive = func(Negative)
-                        test <@ subjectNegaive = Some(0.5) @>
-                    testCase "apriori2" <| fun _ ->
-                        let state =  ClassifierState.empty(None)
-                                                    |> Trainer.train({ value = "positiveText"; category = Positive; weight = None })
-                                                    |> Trainer.train({ value = "negativeText"; category = Negative; weight = None })
-                                                    |> Trainer.train({ value = "negativeText"; category = Negative; weight = None })
-                                                    |> Trainer.train({ value = "negativeText"; category = Negative; weight = None })
-                        let func = NaiveProbability.categoryProbability(state)
-                        let subjectPositive = func(Positive)
-                        test <@ subjectPositive = Some(0.25) @>
-                        let subjectNegaive = func(Negative)
-                        test <@ subjectNegaive = Some(0.75) @>
-                ]
-                testList "P(Bi|A)" [
-                    testCase "probability when category and text exists and has one element" <| fun _ ->
-                        let state =  ClassifierState.empty(None)
-                                                    |> Trainer.train({ value = "test"; category = Positive; weight = None })
-                                                    |> Trainer.train({ value = "test"; category = Negative; weight = None })
-                        let subjectPositive = NaiveProbability.wordWhenCategory ("test") (Positive) (state)
-                        test <@ subjectPositive = Some(1.0) @>
-                        let subjectNegaive = NaiveProbability.wordWhenCategory ("test") (Negative) (state)
-                        test <@ subjectNegaive = Some(1.0) @>
-                    testCase "probability when category and text exists and has two element" <| fun _ ->
-                        let state =  ClassifierState.empty(None)
-                                                    |> Trainer.train({ value = "test"; category = Positive; weight = Some(2) })
-                                                    |> Trainer.train({ value = "test2"; category = Positive; weight = Some(2) })
-                                                    |> Trainer.train({ value = "test"; category = Negative; weight = Some(2) })
-                                                    |> Trainer.train({ value = "test2"; category = Negative; weight = Some(2) })
-                        let subjectPositive = NaiveProbability.wordWhenCategory ("test") (Positive) (state)
-                        test <@ subjectPositive = Some(0.5) @>
-                        let subjectNegaive = NaiveProbability.wordWhenCategory ("test") (Negative) (state)
-                        test <@ subjectNegaive = Some(0.5) @>
-                    testCase "probability when category non exists in map" <| fun _ ->
-                        let state =  ClassifierState.empty(None)
-                                                    |> Trainer.train({ value = "test"; category = Positive; weight = Some(2) })
-                                                    |> Trainer.train({ value = "test2"; category = Positive; weight = Some(2) })
-                        let subject= NaiveProbability.wordWhenCategory ("test") (Negative) (state)
-                        test <@ subject = None @>
-                    testCase "probability when token non exists in map" <| fun _ ->
-                        let state =  ClassifierState.empty(None)
-                                                    |> Trainer.train({ value = "test"; category = Positive; weight = Some(2) })
-                                                    |> Trainer.train({ value = "test2"; category = Positive; weight = Some(2) })
-                        let subject= NaiveProbability.wordWhenCategory ("nonexistenttoken") (Positive) (state)
-                        test <@ subject = None @>
-                ]
-            ]
-        ]
+type Country =
+    | Yes
+    | No
 
+module Classifier =
 
     [<Tests>]
     let tests =
         testList "Classifier" [
-            testList "Naive" [
-                testCase "test when text is negative" <| fun _ ->
+            testList "Multinominal" [
+                testCase "get category Probability" <| fun _ ->
+                    let subject = ClassifierState.empty(None)
+                                    |> Trainer.train({ value = "Chinese Beijing Chinese"; category = Yes; weight = None })
+                                    |> Trainer.train({ value = "Chinese Chinese Shanghai"; category = Yes; weight = None })
+                                    |> Trainer.train({ value = "Chinese Macao"; category = Yes; weight = None })
+                                    |> Trainer.train({ value = "Tokyo Japan Chinese"; category = No; weight = None })
+                                    |> Multinominal.categoryProbability
+
+                    test <@ (subject(Yes)).Value >= 0.72 @>
+                    test <@ (subject(Yes)).Value <= 0.73 @>
+                    test <@ (subject(No)).Value >= 0.27 @>
+                    test <@ (subject(No)).Value <= 0.28 @>
+                testCase "P(Chinese|yes)" <| fun _ ->
+                    let subject = ClassifierState.empty(None)
+                                    |> Trainer.train({ value = "Chinese Beijing Chinese"; category = Yes; weight = None })
+                                    |> Trainer.train({ value = "Chinese Chinese Shanghai"; category = Yes; weight = None })
+                                    |> Trainer.train({ value = "Chinese Macao"; category = Yes; weight = None })
+                                    |> Trainer.train({ value = "Tokyo Japan Chinese"; category = No; weight = None })
+                                    |> Multinominal.countP "chinese" Yes
+                    test <@ (subject).Value = (3.0/7.0) @>
+                testCase "P(Japan|yes)" <| fun _ ->
+                    let subject = ClassifierState.empty(None)
+                                    |> Trainer.train({ value = "Chinese Beijing Chinese"; category = Yes; weight = None })
+                                    |> Trainer.train({ value = "Chinese Chinese Shanghai"; category = Yes; weight = None })
+                                    |> Trainer.train({ value = "Chinese Macao"; category = Yes; weight = None })
+                                    |> Trainer.train({ value = "Tokyo Japan Chinese"; category = No; weight = None })
+                                    |> Multinominal.countP "japan" Yes
+                    test <@ (subject).Value = (1.0/14.0) @>
+                testCase "P(Chinese|no)" <| fun _ ->
+                    let subject = ClassifierState.empty(None)
+                                    |> Trainer.train({ value = "Chinese Beijing Chinese"; category = Yes; weight = None })
+                                    |> Trainer.train({ value = "Chinese Chinese Shanghai"; category = Yes; weight = None })
+                                    |> Trainer.train({ value = "Chinese Macao"; category = Yes; weight = None })
+                                    |> Trainer.train({ value = "Tokyo Japan Chinese"; category = No; weight = None })
+                                    |> Multinominal.countP "chinese" No
+                    test <@ (subject).Value = (2.0/9.0) @>
+                testCase "P(japan|no)" <| fun _ ->
+                    let subject = ClassifierState.empty(None)
+                                    |> Trainer.train({ value = "Chinese Beijing Chinese"; category = Yes; weight = None })
+                                    |> Trainer.train({ value = "Chinese Chinese Shanghai"; category = Yes; weight = None })
+                                    |> Trainer.train({ value = "Chinese Macao"; category = Yes; weight = None })
+                                    |> Trainer.train({ value = "Tokyo Japan Chinese"; category = No; weight = None })
+                                    |> Multinominal.countP "chinese" No
+                    test <@ (subject).Value = (2.0/9.0) @>
+                testCase "P(yes| (Chinese Chinese Chinese Tokyo Japan))" <| fun _ ->
+                    let subject = ClassifierState.empty(None)
+                                    |> Trainer.train({ value = "Chinese Beijing Chinese"; category = Yes; weight = None })
+                                    |> Trainer.train({ value = "Chinese Chinese Shanghai"; category = Yes; weight = None })
+                                    |> Trainer.train({ value = "Chinese Macao"; category = Yes; weight = None })
+                                    |> Trainer.train({ value = "Tokyo Japan Chinese"; category = No; weight = None })
+                                    |> Multinominal.compute ["chinese"; "chinese"; "chinese"; "tokyo"; "japan"] Yes
+                    test <@ subject.Value >= 0.00029 @>
+                    test <@ subject.Value <= 0.00031 @>
+                testCase "P(no| (Chinese Chinese Chinese Tokyo Japan))" <| fun _ ->
+                    let subject = ClassifierState.empty(None)
+                                    |> Trainer.train({ value = "Chinese Beijing Chinese"; category = Yes; weight = None })
+                                    |> Trainer.train({ value = "Chinese Chinese Shanghai"; category = Yes; weight = None })
+                                    |> Trainer.train({ value = "Chinese Macao"; category = Yes; weight = None })
+                                    |> Trainer.train({ value = "Tokyo Japan Chinese"; category = No; weight = None })
+                                    |> Multinominal.compute ["chinese"; "chinese"; "chinese"; "tokyo"; "japan"] No
+                    test <@ subject.Value <= 0.00015 @>
+                    test <@ subject.Value >= 0.00010 @>
+                testCase "classify when text is negative" <| fun _ ->
                     let positiveText = "I love fsharp"
                     let negativeText = "I hate java"
                     let subject =  ClassifierState.empty(None)
                                     |> Trainer.train({ value = positiveText; category = Positive; weight = None })
                                     |> Trainer.train({ value = negativeText; category = Negative; weight = None })
-                                    |> Classifier.classify("My brother hate java")
+                                    |> Classifier.classify("My brother hate java")(Multinominal)
 
                     test <@ subject.score.TryFind(Negative).Value > subject.score.TryFind(Positive).Value @>
-                testCase "test when text is positive" <| fun _ ->
+                testCase "classify when text is positive" <| fun _ ->
                     let positiveText = "I love fsharp"
                     let negativeText = "I hate java"
                     let subject =  ClassifierState.empty(None)
                                     |> Trainer.train({ value = positiveText; category = Positive; weight = None })
                                     |> Trainer.train({ value = negativeText; category = Negative; weight = None })
-                                    |> Classifier.classify("My brother love fsharp")
+                                    |> Classifier.classify("My brother love fsharp")(Multinominal)
 
                     test <@ subject.score.TryFind(Positive).Value > subject.score.TryFind(Negative).Value @>
-                testCase "Fruit classification" <| fun _ ->
-                    let subject =  ClassifierState.empty(None)
-                                    |> Trainer.train({ value = "red sweet"; category = Apple; weight = Some 2 })
-                                    |> Trainer.train({ value = "green"; category = Apple; weight = None })
-                                    |> Trainer.train({ value = "round"; category = Apple; weight = Some 4 })
-                                    |> Trainer.train({ value = "sweet"; category = Banana; weight = Some 2 })
-                                    |> Trainer.train({ value = "green"; category = Banana; weight = None })
-                                    |> Trainer.train({ value = "yellow long"; category = Banana; weight = Some 4 })
-                                    |> Trainer.train({ value = "red"; category = Orange; weight = Some 2 })
-                                    |> Trainer.train({ value = "yellow sweet"; category = Orange; weight = None })
-                                    |> Trainer.train({ value = "round"; category = Orange; weight = Some 4 })
-                                    |> Classifier.classify("Maybe green maybe red but definitely round and sweet.")
-
-                    Expect.isOk (Ok(2)) "should be ok"
             ]
         ]

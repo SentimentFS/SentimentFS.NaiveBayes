@@ -1,6 +1,6 @@
 namespace SentimentFS.NaiveBayes.Classification
 
-module NaiveProbability =
+module Multinominal =
     open SentimentFS.NaiveBayes.Dto
 
     let categoryProbability (state: ClassifierState<_>) =
@@ -8,30 +8,25 @@ module NaiveProbability =
         let allTokensQuantity = tokensQuantityByCategory |> Map.fold(fun acc _ v -> acc + v) 0.0
         fun (category: _) ->
             tokensQuantityByCategory.TryFind(category)
-                |> Option.bind(fun value -> Some(value / allTokensQuantity))
+            |> Option.map(fun value -> value / allTokensQuantity)
 
-    let wordWhenCategory (element: _) (category: _) (state: ClassifierState<_>) =
+    let countP (element: _) (category :_) (state: ClassifierState<_>) =
+        let b = state.tokens.Count |> float
         state.categories.TryFind(category)
-            |> Option.bind(fun cat -> cat.tokens.TryFind(element))
-            |> Option.map(fun tokenQuantity ->
-                                let catProb = categoryProbability state category
-                                let allTokensQuantity = state.categories |> Map.map(fun _ v -> v.tokens |> Map.fold(fun acc _ v1 -> acc + (v1 |> float)) 0.0) |> Map.fold(fun acc _ v -> acc + v) 0.0
-                                ((tokenQuantity |> float) / allTokensQuantity) / catProb.Value
-                            )
-
-    let probabilityByCategory (elements: _ list) (category: _) (state: ClassifierState<_>) =
+            |> Option.map(fun cat ->
+                            let allTokensQuantity = cat.tokens |> Map.fold(fun acc _ v1 -> acc + (v1 |> float)) 0.0
+                            match cat.tokens.TryFind(element) with
+                            | Some x ->
+                                ((x |> float) + 1.0) / (allTokensQuantity + b)
+                            | None ->
+                                1.0 / (allTokensQuantity + b)
+                          )
+    let compute (tokens: _ list) (category: _) (state: ClassifierState<_>) =
         categoryProbability state category
-            |> Option.map(fun categoryProb ->
-                               let elementsProbs = elements
-                                                    |> List.map ((fun element -> wordWhenCategory element category state) >> (fun opt -> defaultArg opt 1.0))
-                                                    |> List.fold(( * )) 1.0
-                               elementsProbs * categoryProb
-                            )
-
-    let compute (elements: _ list) (state: ClassifierState<_>) =
-        state.categories
-                    |> Map.map((fun emotion _ -> probabilityByCategory elements emotion state))
-                    |> Map.map(fun _ v -> defaultArg v 0.0)
+            |> Option.map(fun catProb ->
+                    let prob = tokens |> List.map((fun t -> countP t category state) >> (fun opt -> defaultArg opt 0.0)) |> List.fold(( * )) 1.0
+                    prob * catProb
+                )
 
 
 module Classifier =
@@ -40,14 +35,14 @@ module Classifier =
     open SentimentFS.Common
 
     let internal parseTokens(config: Config)(word: string) =
-        let result = word
-                        |> Tokenizer.tokenize
-                        |> List.filterOut(config.stopWords)
-                        |> List.map(config.stem)
-        result
+        word
+            |> Tokenizer.tokenize
+            |> List.filterOut(config.stopWords)
+            |> List.map(config.stem)
 
-    let classify(element: _) (state: ClassifierState<_>)  =
+    let classify (element: _) (model: ProbabilityModel) (state: ClassifierState<_>)  =
         let tokens = element |> parseTokens(state.config)
-        match state.config.model with
+        match model with
         | _ ->
-            { score = (NaiveProbability.compute(tokens)(state)) }
+            let result = state.categories |> Map.map(fun k _ -> Multinominal.compute tokens k state) |> Map.map(fun _ v -> defaultArg v 0.0)
+            { score = result }

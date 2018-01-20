@@ -1,8 +1,9 @@
 namespace SentimentFS.NaiveBayes.Dto
 
 type ProbabilityModel =
-    | Naive
     | Multinominal
+    | BinarizedMultinomial
+    | Bernulli
 
 type ClassificationScore<'a when 'a : comparison>  = { score: Map<'a, float> }
 
@@ -10,15 +11,15 @@ type TrainingQuery<'a when 'a : comparison> = { value: string; category: 'a; wei
 
 type Category = { trainings: int; tokens: Map<string, int> }
 
-type Config = { model : ProbabilityModel; defaultWeight: int; stem: string -> string; stopWords: string list }
+type Config = { defaultWeight: int; stem: string -> string; stopWords: string list }
 
-type ClassifierState<'a when 'a : comparison> = { categories: Map<'a, Category>; trainings: int; config: Config }
+type ClassifierState<'a when 'a : comparison> = { categories: Map<'a, Category>; trainings: int; tokens: Map<string, int>; config: Config }
 
 
 module Config =
 
     [<CompiledName("Empty")>]
-    let empty() = { stem = id; stopWords = []; model = Naive; defaultWeight = 1 }
+    let empty() = { stem = id; stopWords = []; defaultWeight = 1 }
 
 module Category =
 
@@ -36,9 +37,9 @@ module ClassifierState =
     let empty(config: Config option) =
         match config with
         | Some conf ->
-            { categories = Map.empty<'a, Category>; trainings = 0; config = conf }
+            { categories = Map.empty<'a, Category>; trainings = 0; tokens = Map.empty<string, int>; config = conf }
         | None ->
-            { categories = Map.empty<'a, Category>; trainings = 0; config = Config.empty() }
+            { categories = Map.empty<'a, Category>; trainings = 0; tokens = Map.empty<string, int>; config = Config.empty() }
 
     [<CompiledName("IncrementTrainings")>]
     let incrementTrainings(state: ClassifierState<_>) =
