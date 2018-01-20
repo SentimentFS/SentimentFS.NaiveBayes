@@ -4,7 +4,7 @@ module Multinominal =
     open SentimentFS.NaiveBayes.Dto
 
     let categoryProbability (state: ClassifierState<_>) =
-        let tokensQuantityByCategory = state.categories |> Map.map(fun _ v -> v.tokens |> Map.fold(fun acc _ v1 -> acc + (v1 |> float)) 0.0)
+        let tokensQuantityByCategory = state.categories |> Map.map(fun _ v -> v.tokens |> Map.fold(fun acc _ v1 -> acc + v1) 0 |> float)
         let allTokensQuantity = tokensQuantityByCategory |> Map.fold(fun acc _ v -> acc + v) 0.0
         fun (category: _) ->
             tokensQuantityByCategory.TryFind(category)
@@ -14,7 +14,7 @@ module Multinominal =
         let b = state.tokens.Count |> float
         state.categories.TryFind(category)
             |> Option.map(fun cat ->
-                            let allTokensQuantity = cat.tokens |> Map.fold(fun acc _ v1 -> acc + (v1 |> float)) 0.0
+                            let allTokensQuantity = cat.tokens |> Map.fold(fun acc _ v1 -> acc + v1) 0 |> float
                             match cat.tokens.TryFind(element) with
                             | Some x ->
                                 ((x |> float) + 1.0) / (allTokensQuantity + b)
